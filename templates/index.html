@@ -1,9 +1,126 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Let's Go Math!</title>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: #1f4bb8;
+            color: white;
+            padding: 18px 20px;
+        }
+        .container {
+            max-width: 700px;
+            margin: 30px auto;
+            background: white;
+            padding: 24px;
+            border-radius: 10px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+        }
+        h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .subtitle {
+            margin-top: 6px;
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        .problem-box {
+            margin-top: 18px;
+            padding: 16px;
+            border: 1px solid #e3e8f5;
+            border-radius: 10px;
+            background: #f9fbff;
+        }
+        label {
+            display: block;
+            margin-top: 12px;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            border-radius: 8px;
+            border: 1px solid #cfd7f1;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button {
+            margin-top: 14px;
+            padding: 10px 14px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #1f4bb8;
+            color: white;
+        }
+        button:hover {
+            background: #183b8f;
+        }
+        .feedback {
+            margin-top: 14px;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        .ok {
+            background: #e8f7ee;
+            color: #167a3f;
+            border: 1px solid #bfe9cf;
+        }
+        .bad {
+            background: #fff0f0;
+            color: #a81d1d;
+            border: 1px solid #f1b3b3;
+        }
+        footer {
+            text-align: center;
+            margin: 18px 0 30px;
+            color: #6c7384;
+            font-size: 13px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to Let's Go Math!</h1>
+    <header>
+        <h1>Welcome to Let's Go Math!</h1>
+        <div class="subtitle">Hello World version - one question + answer check</div>
+    </header>
+    <main class="container">
+        <h2>Practice Problem</h2>
+        <div class="problem-box">
+            <p><strong>{{ question }}</strong></p>
+            <form method="POST">
+                <label for="answer">Your Answer:</label>
+                <input
+                    type="text"
+                    id="answer"
+                    name="answer"
+                    placeholder="Type your answer..."
+                    value="{{ user_answer }}"
+                />
+                <button type="submit">Submit</button>
+            </form>
+            {% if feedback %}
+                {% if feedback == "Correct!" %}
+                   <div class="feedback ok">{{ feedback }}</div>
+                {% else %}
+                   <div class="feedback bad">{{ feedback }}</div>
+                {% endif %}
+            {% endif %}
+        </div>
+    </main>
+    <footer></footer>
 </body>
-<html>
+</html>
