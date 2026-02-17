@@ -1,10 +1,13 @@
 from flask import Flask, render_template, request
+import os
 
 app = Flask(__name__)
 
 PROBLEM = {
-    "question" : "What is 2 + 2?", 
-    "answer" : 4
+    "instruction" : "Solve for",
+    "variable" : "x",
+    "equation" : "x + 5 = 7",
+    "answer" : 2
 }
 
 @app.route("/", methods=["GET", "POST"])
@@ -26,6 +29,14 @@ def home():
                     feedback = "Incorrect!"
             except ValueError:
                 feedback = "Please enter a valid whole number."
-    return render_template("index.html", question=PROBLEM["question"], feedback=feedback, user_answer=user_answer)
+    return render_template(
+        "index.html", 
+        instruction=PROBLEM["instruction"], 
+        variable=PROBLEM["variable"],
+        equation=PROBLEM["equation"],
+        feedback=feedback, 
+        user_answer=user_answer
+    )
 if __name__ == '__main__':
-    app.run(debug=True, port=5002)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)

@@ -36,10 +36,24 @@
         }
         .problem-box {
             margin-top: 18px;
-            padding: 16px;
+            padding: 20px;
             border: 1px solid #e3e8f5;
             border-radius: 10px;
             background: #f9fbff;
+        }
+        .instruction {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .equation {
+            font-size: 34px;
+            font-family: Georgia, serif;
+            text-align: center;
+            margin: 25px 0;
+            letter-spacing: 1px;
+        }
+        .equation em {
+            font-style: italic;
         }
         label {
             display: block;
@@ -95,12 +109,17 @@
 <body>
     <header>
         <h1>Welcome to Let's Go Math!</h1>
-        <div class="subtitle">Hello World version - one question + answer check</div>
+        <div class="subtitle">Algebra Practice</div>
     </header>
     <main class="container">
         <h2>Practice Problem</h2>
         <div class="problem-box">
-            <p><strong>{{ question }}</strong></p>
+            <div class="instruction">
+                {{ instruction }} <em>{{ variable }}</em>
+            </div>
+            <div class="equation">
+                {{ equation }}
+            </div>
             <form method="POST">
                 <label for="answer">Your Answer:</label>
                 <input
@@ -121,6 +140,8 @@
             {% endif %}
         </div>
     </main>
-    <footer></footer>
+    <footer>
+        © 2026 Let's Go Math
+    </footer>
 </body>
 </html>
