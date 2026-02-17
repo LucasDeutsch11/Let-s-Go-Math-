@@ -1,0 +1,12 @@
+Preparing to start Flask on port 5003
+Activating virtualenv venv
+Starting Flask app (foreground). Use Ctrl+C to stop.
+ * Serving Flask app 'app'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on https://127.0.0.1:5003
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [12/Feb/2026 17:55:09] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [12/Feb/2026 17:55:09] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+127.0.0.1 - - [12/Feb/2026 17:55:29] "POST / HTTP/1.1" 200 -
+127.0.0.1 - - [12/Feb/2026 18:04:54] "GET / HTTP/1.1" 200 -
