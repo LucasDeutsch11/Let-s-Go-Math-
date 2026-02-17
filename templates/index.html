@@ -138,6 +138,11 @@
                    <div class="feedback bad">{{ feedback }}</div>
                 {% endif %}
             {% endif %}
+            {% if feedback == "Correct!" %}
+            <form action="/next" method="POST">
+                <button type="submit">Next Problem</button>
+            </form>
+            {% endif %}
         </div>
     </main>
     <footer>
