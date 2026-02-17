@@ -15,9 +15,8 @@ PROBLEMS = [
 @app.route("/", methods=["GET"])
 def home():
     return render_template("home.html")
- 
- @app.route("/start", methods=["GET"])
- def start():
+@app.route("/start", methods=["GET"])
+def start():
     session["problem_index"] = 0
     return redirect(url_for("practice"))
 
