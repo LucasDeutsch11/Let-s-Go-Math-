@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 PROBLEM = {
     "instruction" : "Solve for",
-    "variable" : "x",
+    "variable" : "x.",
     "equation" : "x + 5 = 7",
     "answer" : 2
 }
