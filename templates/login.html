@@ -1,0 +1,58 @@
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+  import {
+    getAuth,
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword
+  } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+  const firebaseConfig = {
+    apiKey: "AIzaSyC6L5r62_GVoEWCmkw_hm2Crcu6o5EhwmA",
+    authDomain: "lets-go-math.firebaseapp.com",
+    projectId: "lets-go-math",
+    storageBucket: "lets-go-math.firebasestorage.app",
+    messagingSenderId: "358881808064",
+    appId: "1:358881808064:web:85550f97b17bdc0d1f6725",
+  };
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  window.login = async function () {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    try {
+        const userCred = await signInWithEmailAndPassword(auth, email, password);
+        const token = await userCred.user.getIdToken();
+
+        await fetch("/api/sessionLogin", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ idToken: token})
+        });
+
+        window.location.href = "/dashboard";
+    } catch (error) {
+        alert(error.message);
+    }
+  };
+  window.signup = async function () {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    try {
+        const userCred = await createUserWithEmailAndPassword(auth, email, password);
+        const token = await userCred.user.getIdToken();
+
+        await fetch("/api/sessionLogin", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ idToken: token })
+        });
+
+        window.location.href = "/dashboard";
+    } catch (error) {
+        alert(error.message);
+    }
+  };
+</script>
