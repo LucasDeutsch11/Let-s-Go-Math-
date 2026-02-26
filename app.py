@@ -3,12 +3,16 @@ import os
 import firebase_admin
 from firebase_admin import credentials, auth
 
-# Initialize Firebase Admin
+# Initialize Firebase Admin (optional for production)
+firebase_available = False
 try:
     cred = credentials.Certificate("ServiceAccountKey.json")
     firebase_admin.initialize_app(cred)
+    firebase_available = True
+    print("Firebase initialized successfully")
 except Exception as e:
-    print(f"Firebase initialization failed: {e}")
+    print(f"Firebase initialization failed (running without auth): {e}")
+    firebase_available = False
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "dev-secret")
@@ -45,6 +49,8 @@ def reset_password():
 
 @app.route("/api/sessionLogin", methods=["POST"])
 def session_login():
+    if not firebase_available:
+        return jsonify({"error": "Authentication not available"}), 503
     try:
         id_token = request.json.get("idToken")
         decoded_token = auth.verify_id_token(id_token)
