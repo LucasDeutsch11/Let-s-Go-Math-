@@ -29,6 +29,10 @@ def home():
 def login():
     return render_template("login.html")
 
+@app.route("/signup", methods=["GET"])
+def signup():
+    return render_template("signup.html")
+
 @app.route("/api/sessionLogin", methods=["POST"])
 def session_login():
     try:

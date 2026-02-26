@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sign In - Let's Go Math!</title>
+    <title>Sign Up - Let's Go Math!</title>
     
     <style>
         body {
@@ -51,10 +51,6 @@
             cursor: pointer;
             font-size: 16px;
         }
-        .login-btn {
-            background: #1f4bb8;
-            color: white;
-        }
         .signup-btn {
             background: #28a745;
             color: white;
@@ -70,6 +66,17 @@
         .form-section {
             margin: 20px 0;
         }
+        .login-link {
+            text-align: center;
+            margin-top: 15px;
+        }
+        .login-link a {
+            color: #1f4bb8;
+            text-decoration: none;
+        }
+        .login-link a:hover {
+            text-decoration: underline;
+        }
         footer {
             text-align: center;
             margin: 18px 0 30px;
@@ -81,7 +88,7 @@
 <body>
     <header>
         <h1>Welcome to Let's Go Math!</h1>
-        <div class="subtitle">Sign in to track your progress</div>
+        <div class="subtitle">Create your account</div>
     </header>
     
     <main class="container">
@@ -89,17 +96,20 @@
             <button type="submit" class="back-btn">← Back to Home</button>
         </form>
         
-        <h2>Sign In</h2>
+        <h2>Sign Up</h2>
         
         <div class="form-section">
+            <input type="text" id="firstName" placeholder="First Name" required />
+            <input type="text" id="lastName" placeholder="Last Name" required />
+            <input type="text" id="username" placeholder="Username" required />
             <input type="email" id="email" placeholder="Email" required />
-            <input type="password" id="password" placeholder="Password" required />
+            <input type="password" id="password" placeholder="Password (min 6 characters)" required />
             
-            <button onclick="login()" class="login-btn">Sign In</button>
+            <button onclick="createAccount()" class="signup-btn">Create Account</button>
         </div>
 
-        <div style="text-align: center; margin-top: 15px;">
-            Don't have an account? <a href="/signup" style="color: #1f4bb8; text-decoration: none;">Sign Up</a>
+        <div class="login-link">
+            Already have an account? <a href="/login">Sign In</a>
         </div>
     </main>
     
@@ -112,8 +122,14 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
   import {
     getAuth,
-    signInWithEmailAndPassword
+    createUserWithEmailAndPassword,
+    updateProfile
   } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+  import {
+    getFirestore,
+    doc,
+    setDoc
+  } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
   
   const firebaseConfig = {
     apiKey: "AIzaSyC6L5r62_GVoEWCmkw_hm2Crcu6o5EhwmA",
@@ -126,33 +142,77 @@
   
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
+  const db = getFirestore(app);
 
-  window.login = async function () {
-    const email = document.getElementById("email").value;
+  window.createAccount = async function () {
+    const firstName = document.getElementById("firstName").value.trim();
+    const lastName = document.getElementById("lastName").value.trim();
+    const username = document.getElementById("username").value.trim();
+    const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
 
-    if (!email || !password) {
-        alert("Please enter both email and password");
+    // Validation
+    if (!firstName || !lastName || !username || !email || !password) {
+        alert("Please fill in all fields");
+        return;
+    }
+
+    if (password.length < 6) {
+        alert("Password must be at least 6 characters long");
+        return;
+    }
+
+    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+        alert("Username can only contain letters, numbers, and underscores");
         return;
     }
 
     try {
-        const userCred = await signInWithEmailAndPassword(auth, email, password);
-        const token = await userCred.user.getIdToken();
+        // Create the user account
+        const userCred = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCred.user;
+
+        // Update the user's profile
+        await updateProfile(user, {
+            displayName: `${firstName} ${lastName}`
+        });
+
+        // Save additional user info to Firestore
+        await setDoc(doc(db, "users", user.uid), {
+            firstName: firstName,
+            lastName: lastName,
+            username: username,
+            email: email,
+            createdAt: new Date()
+        });
+
+        // Get the ID token for session login
+        const token = await user.getIdToken();
 
         const response = await fetch("/api/sessionLogin", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ idToken: token})
+            body: JSON.stringify({ idToken: token })
         });
 
         if (response.ok) {
+            alert("Account created successfully!");
             window.location.href = "/dashboard";
         } else {
-            alert("Login failed. Please try again.");
+            alert("Account created but login failed. Please try signing in.");
+            window.location.href = "/login";
         }
     } catch (error) {
-        alert("Error: " + error.message);
+        console.error("Error creating account:", error);
+        if (error.code === 'auth/email-already-in-use') {
+            alert("An account with this email already exists. Please try signing in instead.");
+        } else if (error.code === 'auth/weak-password') {
+            alert("Password is too weak. Please choose a stronger password.");
+        } else if (error.code === 'auth/invalid-email') {
+            alert("Please enter a valid email address.");
+        } else {
+            alert("Error creating account: " + error.message);
+        }
     }
   };
 </script>
