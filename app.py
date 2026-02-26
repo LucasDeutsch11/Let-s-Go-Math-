@@ -39,6 +39,10 @@ def login():
 def signup():
     return render_template("signup.html")
 
+@app.route("/reset-password", methods=["GET"])
+def reset_password():
+    return render_template("reset_password.html")
+
 @app.route("/api/sessionLogin", methods=["POST"])
 def session_login():
     try:
