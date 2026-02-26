@@ -83,9 +83,16 @@
             <div class="subtitle">Algebra Practice</div>
         </div>
         <div class="header-right">
-            <form action="/login" method="GET" style="margin: 0;">
-                <button type="submit" class="header-signin-btn">Sign In</button>
-            </form>
+            {% if user %}
+                <span style="color: white; margin-right: 15px;">Welcome, {{ user.name }}!</span>
+                <form action="/logout" method="GET" style="display: inline; margin: 0;">
+                    <button type="submit" class="header-signin-btn" style="background: #dc3545; padding: 6px 12px;">Logout</button>
+                </form>
+            {% else %}
+                <form action="/login" method="GET" style="margin: 0;">
+                    <button type="submit" class="header-signin-btn">Sign In</button>
+                </form>
+            {% endif %}
         </div>
     </header>
     <main class="container">

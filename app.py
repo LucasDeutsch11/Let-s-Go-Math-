@@ -23,7 +23,13 @@ PROBLEMS = [
 
 @app.route("/", methods=["GET"])
 def home():
-    return render_template("home.html")
+    user_info = None
+    if "user_id" in session:
+        user_info = {
+            "email": session.get("user_email"),
+            "name": session.get("user_name", "User")
+        }
+    return render_template("home.html", user=user_info)
 
 @app.route("/login", methods=["GET"])
 def login():
@@ -40,6 +46,7 @@ def session_login():
         decoded_token = auth.verify_id_token(id_token)
         session["user_id"] = decoded_token["uid"]
         session["user_email"] = decoded_token.get("email")
+        session["user_name"] = decoded_token.get("name", decoded_token.get("email", "User"))
         return jsonify({"status": "success"})
     except Exception as e:
         return jsonify({"error": str(e)}), 400
@@ -48,7 +55,7 @@ def session_login():
 def dashboard():
     if "user_id" not in session:
         return redirect(url_for("login"))
-    return redirect(url_for("start"))
+    return redirect(url_for("home"))
 
 @app.route("/logout")
 def logout():
