@@ -1,5 +1,14 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 import os
+import firebase_admin
+from firebase_admin import credentials, auth
+
+# Initialize Firebase Admin
+try:
+    cred = credentials.Certificate("ServiceAccountKey.json")
+    firebase_admin.initialize_app(cred)
+except Exception as e:
+    print(f"Firebase initialization failed: {e}")
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "dev-secret")
@@ -15,6 +24,32 @@ PROBLEMS = [
 @app.route("/", methods=["GET"])
 def home():
     return render_template("home.html")
+
+@app.route("/login", methods=["GET"])
+def login():
+    return render_template("login.html")
+
+@app.route("/api/sessionLogin", methods=["POST"])
+def session_login():
+    try:
+        id_token = request.json.get("idToken")
+        decoded_token = auth.verify_id_token(id_token)
+        session["user_id"] = decoded_token["uid"]
+        session["user_email"] = decoded_token.get("email")
+        return jsonify({"status": "success"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+@app.route("/dashboard")
+def dashboard():
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+    return redirect(url_for("start"))
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("home"))
 @app.route("/start", methods=["GET"])
 def start():
     session["problem_index"] = 0

@@ -1,3 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign In - Let's Go Math!</title>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: #1f4bb8;
+            color: white;
+            padding: 18px 20px;
+        }
+        .container {
+            max-width: 400px;
+            margin: 30px auto;
+            background: white;
+            padding: 24px;
+            border-radius: 10px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+        }
+        h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .subtitle {
+            margin-top: 6px;
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .login-btn {
+            background: #1f4bb8;
+            color: white;
+        }
+        .signup-btn {
+            background: #28a745;
+            color: white;
+        }
+        .back-btn {
+            background: #6c757d;
+            color: white;
+            margin-bottom: 20px;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        .form-section {
+            margin: 20px 0;
+        }
+        footer {
+            text-align: center;
+            margin: 18px 0 30px;
+            color: #6c7384;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Welcome to Let's Go Math!</h1>
+        <div class="subtitle">Sign in to track your progress</div>
+    </header>
+    
+    <main class="container">
+        <form action="/" method="GET">
+            <button type="submit" class="back-btn">← Back to Home</button>
+        </form>
+        
+        <h2>Sign In / Sign Up</h2>
+        
+        <div class="form-section">
+            <input type="email" id="email" placeholder="Email" required />
+            <input type="password" id="password" placeholder="Password" required />
+            
+            <button onclick="login()" class="login-btn">Sign In</button>
+            <button onclick="signup()" class="signup-btn">Sign Up</button>
+        </div>
+    </main>
+    
+    <footer>
+        © 2026 Let's Go Math
+    </footer>
+
 <script type="module">
   // Import the functions you need from the SDKs you need
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
@@ -6,6 +112,7 @@
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword
   } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+  
   const firebaseConfig = {
     apiKey: "AIzaSyC6L5r62_GVoEWCmkw_hm2Crcu6o5EhwmA",
     authDomain: "lets-go-math.firebaseapp.com",
@@ -14,6 +121,7 @@
     messagingSenderId: "358881808064",
     appId: "1:358881808064:web:85550f97b17bdc0d1f6725",
   };
+  
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
 
@@ -21,38 +129,64 @@
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
 
+    if (!email || !password) {
+        alert("Please enter both email and password");
+        return;
+    }
+
     try {
         const userCred = await signInWithEmailAndPassword(auth, email, password);
         const token = await userCred.user.getIdToken();
 
-        await fetch("/api/sessionLogin", {
+        const response = await fetch("/api/sessionLogin", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ idToken: token})
         });
 
-        window.location.href = "/dashboard";
+        if (response.ok) {
+            window.location.href = "/dashboard";
+        } else {
+            alert("Login failed. Please try again.");
+        }
     } catch (error) {
-        alert(error.message);
+        alert("Error: " + error.message);
     }
   };
+  
   window.signup = async function () {
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
+
+    if (!email || !password) {
+        alert("Please enter both email and password");
+        return;
+    }
+
+    if (password.length < 6) {
+        alert("Password must be at least 6 characters long");
+        return;
+    }
 
     try {
         const userCred = await createUserWithEmailAndPassword(auth, email, password);
         const token = await userCred.user.getIdToken();
 
-        await fetch("/api/sessionLogin", {
+        const response = await fetch("/api/sessionLogin", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ idToken: token })
         });
 
-        window.location.href = "/dashboard";
+        if (response.ok) {
+            window.location.href = "/dashboard";
+        } else {
+            alert("Sign up failed. Please try again.");
+        }
     } catch (error) {
-        alert(error.message);
+        alert("Error: " + error.message);
     }
   };
 </script>
+</body>
+</html>
