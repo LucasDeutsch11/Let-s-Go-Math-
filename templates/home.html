@@ -16,6 +16,27 @@
             background: #1f4bb8;
             color: white;
             padding: 18px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-left {
+            flex-grow: 1;
+        }
+        .header-right {
+            flex-shrink: 0;
+        }
+        .header-signin-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .header-signin-btn:hover {
+            background: #218838;
         }
         .container {
             max-width: 700px;
@@ -57,18 +78,17 @@
 </head>
 <body>
     <header>
-        <h1>Welcome to Let's Go Math!</h1>
-        <div class="subtitle">Algebra Practice</div>
-    </header>
-    <main class="container">
-        <div style="margin-bottom: 20px; padding: 20px; border: 1px solid #e3e8f5; border-radius: 10px; background: #f9fbff;">
-            <h3 style="margin-top: 0;">Sign In for Progress Tracking</h3>
-            <p>Create an account to track your progress and save your scores!</p>
-            <form action="/login" method="GET">
-                <button type="submit" style="background: #28a745;">Sign In / Sign Up</button>
+        <div class="header-left">
+            <h1>Welcome to Let's Go Math!</h1>
+            <div class="subtitle">Algebra Practice</div>
+        </div>
+        <div class="header-right">
+            <form action="/login" method="GET" style="margin: 0;">
+                <button type="submit" class="header-signin-btn">Sign In / Sign Up</button>
             </form>
         </div>
-
+    </header>
+    <main class="container">
         <h2>Home</h2>
         <p>Practice simple algebra problems and receive instant feedback.</p>
 
