@@ -6,7 +6,7 @@ from firebase_admin import credentials, auth
 # Initialize Firebase Admin (optional for production)
 firebase_available = False
 try:
-    cred = credentials.Certificate("ServiceAccountKey.json")
+    cred = credentials.Certificate("serviceAccountKey.json")
     firebase_admin.initialize_app(cred)
     firebase_available = True
     print("Firebase initialized successfully")
