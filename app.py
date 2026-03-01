@@ -34,11 +34,11 @@ MATH_TOPICS = {
         "title": "Inequalities",
         "description": "Solve and graph linear inequalities",
         "problems": [
-            {"instruction": "Solve for", "variable": "x", "equation": "x + 3 > 8", "answer": 5},
-            {"instruction": "Solve for", "variable": "x", "equation": "2x ≤ 10", "answer": 5},
-            {"instruction": "Solve for", "variable": "x", "equation": "x - 7 < 2", "answer": 9},
-            {"instruction": "Solve for", "variable": "x", "equation": "3x ≥ 15", "answer": 5},
-            {"instruction": "Solve for", "variable": "x", "equation": "x/2 > 4", "answer": 8},
+            {"instruction": "Solve for", "variable": "x", "equation": "x + 3 > 8", "answer": "x > 5"},
+            {"instruction": "Solve for", "variable": "x", "equation": "2x ≤ 10", "answer": "x ≤ 5"},
+            {"instruction": "Solve for", "variable": "x", "equation": "x - 7 < 2", "answer": "x < 9"},
+            {"instruction": "Solve for", "variable": "x", "equation": "3x ≥ 15", "answer": "x ≥ 5"},
+            {"instruction": "Solve for", "variable": "x", "equation": "x/2 > 4", "answer": "x > 8"},
         ]
     },
     "systems": {

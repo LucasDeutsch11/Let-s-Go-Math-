@@ -116,6 +116,26 @@
         .back-link:hover {
             text-decoration: underline;
         }
+        .symbol-buttons {
+            margin-top: 8px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .symbol-btn {
+            padding: 6px 12px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            background: #f8f9fa;
+            color: #333;
+            cursor: pointer;
+            margin: 0;
+            font-family: Georgia, serif;
+        }
+        .symbol-btn:hover {
+            background: #e9ecef;
+        }
         footer {
             text-align: center;
             margin: 18px 0 30px;
@@ -160,6 +180,29 @@
                     autocomplete="off"
                     autofocus
                 />
+                <div class="symbol-buttons">
+                    <button type="button" class="symbol-btn" onclick="insertSymbol('≤')">≤</button>
+                    <button type="button" class="symbol-btn" onclick="insertSymbol('≥')">≥</button>
+                    <button type="button" class="symbol-btn" onclick="insertSymbol('<')">&lt;</button>
+                    <button type="button" class="symbol-btn" onclick="insertSymbol('>')">&gt;</button>
+                    <button type="button" class="symbol-btn" onclick="insertSymbol('(')">(</button>
+                    <button type="button" class="symbol-btn" onclick="insertSymbol(')')">)</button>
+                </div>
+                <script>
+                    function insertSymbol(symbol) {
+                        const input = document.getElementById('answer');
+                        const cursorPos = input.selectionStart;
+                        const textBefore = input.value.substring(0, cursorPos);
+                        const textAfter = input.value.substring(input.selectionEnd);
+                        
+                        input.value = textBefore + symbol + textAfter;
+                        
+                        // Set cursor position after the inserted symbol
+                        const newCursorPos = cursorPos + symbol.length;
+                        input.setSelectionRange(newCursorPos, newCursorPos);
+                        input.focus();
+                    }
+                </script>
                 <button type="submit">Submit</button>
             </form>
             {% if feedback %}
