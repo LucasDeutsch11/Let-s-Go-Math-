@@ -262,7 +262,18 @@ def practice():
                     # For algebraic expressions and coordinate pairs, normalize whitespace
                     user_answer_clean = user_answer.replace(" ", "")
                     correct_answer_clean = str(problem["answer"]).replace(" ", "")
-                    if user_answer_clean.lower() == correct_answer_clean.lower():
+                    
+                    # Check if this is a comma-separated answer (like quadratic solutions)
+                    if "," in correct_answer_clean and "," in user_answer_clean:
+                        # Parse both answers as comma-separated values
+                        user_values = set(user_answer_clean.split(","))
+                        correct_values = set(correct_answer_clean.split(","))
+                        is_correct = user_values == correct_values
+                    else:
+                        # Regular string comparison for other answer types
+                        is_correct = user_answer_clean.lower() == correct_answer_clean.lower()
+                    
+                    if is_correct:
                         feedback = "Correct!"
                         # Update progress for logged-in users
                         if "user_id" in session:
