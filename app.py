@@ -6,13 +6,25 @@ from firebase_admin import credentials, auth
 # Initialize Firebase Admin (optional for production)
 firebase_available = False
 try:
+    import signal
+    
+    def timeout_handler(signum, frame):
+        raise TimeoutError("Firebase initialization timeout")
+    
+    # Set 5-second timeout for Firebase initialization
+    signal.signal(signal.SIGALRM, timeout_handler)
+    signal.alarm(5)
+    
     cred = credentials.Certificate("serviceAccountKey.json")
     firebase_admin.initialize_app(cred)
     firebase_available = True
     print("Firebase initialized successfully")
+    
+    signal.alarm(0)  # Cancel timeout
 except Exception as e:
     print(f"Firebase initialization failed (running without auth): {e}")
     firebase_available = False
+    signal.alarm(0)  # Cancel timeout
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "dev-secret")
@@ -347,6 +359,11 @@ def topic_completed(topic_id):
     
     return render_template("topic_completed.html", user=user_info, topic=topic, topic_id=topic_id)
 
+@app.route("/health")
+def health_check():
+    """Simple health check for monitoring"""
+    return {"status": "healthy", "firebase": firebase_available}, 200
+
 @app.route("/restart/<topic_id>", methods=["POST"])
 def restart_topic(topic_id):
     if topic_id not in MATH_TOPICS:
@@ -358,4 +375,6 @@ def restart_topic(topic_id):
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+    # Use debug=False in production for better performance
+    debug_mode = os.environ.get("FLASK_ENV") == "development"
+    app.run(host="0.0.0.0", port=port, debug=debug_mode)
