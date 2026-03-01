@@ -100,11 +100,11 @@ MATH_TOPICS = {
         "title": "Word Problems",
         "description": "Apply algebra to real-world situations",
         "problems": [
-            {"instruction": "A number plus 7 equals 15. Find the number.", "variable": "x", "equation": "x + 7 = 15", "answer": 8},
-            {"instruction": "Twice a number is 18. Find the number.", "variable": "x", "equation": "2x = 18", "answer": 9},
-            {"instruction": "A number minus 5 equals 12. Find the number.", "variable": "x", "equation": "x - 5 = 12", "answer": 17},
-            {"instruction": "Three times a number plus 4 equals 19. Find the number.", "variable": "x", "equation": "3x + 4 = 19", "answer": 5},
-            {"instruction": "Half of a number is 6. Find the number.", "variable": "x", "equation": "x/2 = 6", "answer": 12},
+            {"instruction": "Solve for", "variable": "x", "equation": "A number plus 7 equals 15. Find the number.", "answer": 8},
+            {"instruction": "Solve for", "variable": "x", "equation": "Twice a number is 18. Find the number.", "answer": 9},
+            {"instruction": "Solve for", "variable": "x", "equation": "A number minus 5 equals 12. Find the number.", "answer": 17},
+            {"instruction": "Solve for", "variable": "x", "equation": "Three times a number plus 4 equals 19. Find the number.", "answer": 5},
+            {"instruction": "Solve for", "variable": "x", "equation": "Half of a number is 6. Find the number.", "answer": 12},
         ]
     }
 }
