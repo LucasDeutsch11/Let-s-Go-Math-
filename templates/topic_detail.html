@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ topic.title }} - Let's Go Math!</title>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: #1f4bb8;
+            color: white;
+            padding: 18px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-left {
+            flex-grow: 1;
+        }
+        .header-right {
+            flex-shrink: 0;
+        }
+        .header-signin-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .header-signin-btn:hover {
+            background: #218838;
+        }
+        .container {
+            max-width: 700px;
+            margin: 30px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+        }
+        h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .subtitle {
+            margin-top: 6px;
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        .topic-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e3e8f5;
+        }
+        .topic-title {
+            font-size: 32px;
+            color: #1f4bb8;
+            margin-bottom: 10px;
+        }
+        .topic-description {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        .progress-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .progress-bar {
+            background: #e9ecef;
+            border-radius: 10px;
+            height: 12px;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: #28a745;
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+        .progress-text {
+            font-size: 14px;
+            color: #333;
+            text-align: center;
+        }
+        .action-buttons {
+            text-align: center;
+            margin-top: 20px;
+        }
+        button {
+            margin: 8px 12px;
+            padding: 12px 24px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .start-btn, .continue-btn {
+            background: #1f4bb8;
+            color: white;
+        }
+        .start-btn:hover, .continue-btn:hover {
+            background: #183b8f;
+        }
+        .back-btn {
+            background: #6c757d;
+            color: white;
+        }
+        .back-btn:hover {
+            background: #5a6268;
+        }
+        footer {
+            text-align: center;
+            margin: 18px 0 30px;
+            color: #6c7384;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-left">
+            <h1>Welcome to Let's Go Math!</h1>
+            <div class="subtitle">{{ topic.title }}</div>
+        </div>
+        <div class="header-right">
+            {% if user %} 
+                <span style="color: white; margin-right: 15px;">Welcome, {{ user.name }}!</span>
+                <form action="/logout" method="GET" style="display: inline; margin: 0;">
+                    <button type="submit" class="header-signin-btn" style="background: #dc3545; padding: 6px 12px;">Logout</button>
+                </form>
+            {% else %}
+                <form action="/login" method="GET" style="margin: 0;">
+                    <button type="submit" class="header-signin-btn">Sign In</button>
+                </form>
+            {% endif %}
+        </div>
+    </header>
+    
+    <main class="container">
+        <div class="topic-header">
+            <div class="topic-title">{{ topic.title }}</div>
+            <div class="topic-description">{{ topic.description }}</div>
+        </div>
+
+        {% if user %}
+        <div class="progress-section">
+            <h3 style="margin-top: 0; color: #1f4bb8;">Your Progress</h3>
+            <div class="progress-bar">
+                <div class="progress-fill" data-progress="{{ progress.percentage }}"></div>
+            </div>
+            <div class="progress-text">
+                <strong>{{ progress.completed }} of {{ progress.total }} problems completed</strong>
+                {% if progress.completed == progress.total %}
+                    <br>Congratulations! You've completed this topic!
+                {% elif progress.completed > 0 %}
+                    <br>Keep going! You're {{ "%.0f"|format((progress.completed / progress.total * 100)) }}% done.
+                {% endif %}
+            </div>
+        </div>
+        {% else %}
+        <div class="progress-section">
+            <h3 style="margin-top: 0; color: #1f4bb8;">Ready to Start?</h3>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 0%"></div>
+            </div>
+            <div class="progress-text">
+                <strong>0 of {{ topic.problems|length }} problems completed</strong>
+                <br><em>Sign in to track your progress!</em>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="action-buttons">
+            {% if user and progress.completed > 0 %}
+                <form action="/start/{{ topic_id }}" method="GET" style="display: inline;">
+                    <button type="submit" class="continue-btn">Continue Practice</button>
+                </form>
+                <form action="/restart/{{ topic_id }}" method="POST" style="display: inline;">
+                    <button type="submit" class="start-btn">Restart Topic</button>
+                </form>
+            {% else %}
+                <form action="/start/{{ topic_id }}" method="GET" style="display: inline;">
+                    <button type="submit" class="start-btn">Start Practice</button>
+                </form>
+            {% endif %}
+            
+            <form action="/topics" method="GET" style="display: inline;">
+                <button type="submit" class="back-btn">← Back to Topics</button>
+            </form>
+        </div>
+    </main>
+    
+    <footer>
+        © 2026 Let's Go Math
+    </footer>
+    
+    <script>
+        // Set progress bar width using JavaScript (cleaner than template CSS)
+        document.addEventListener('DOMContentLoaded', function() {
+            const progressFill = document.querySelector('.progress-fill');
+            if (progressFill) {
+                const progressValue = progressFill.getAttribute('data-progress');
+                progressFill.style.width = progressValue + '%';
+            }
+        });
+    </script>
+</body>
+</html>

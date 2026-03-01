@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ topic.title }} Complete! - Let's Go Math!</title>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: #1f4bb8;
+            color: white;
+            padding: 18px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-left {
+            flex-grow: 1;
+        }
+        .header-right {
+            flex-shrink: 0;
+        }
+        .header-signin-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .header-signin-btn:hover {
+            background: #218838;
+        }
+        .container {
+            max-width: 700px;
+            margin: 30px auto;
+            background: white;
+            padding: 40px 24px;
+            border-radius: 10px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+        h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .subtitle {
+            margin-top: 6px;
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        .completion-box {
+            margin: 30px 0;
+            padding: 30px;
+            border: 2px solid #28a745;
+            border-radius: 15px;
+            background: #f8fff8;
+        }
+        .celebration-emoji {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        .completion-title {
+            font-size: 32px;
+            color: #28a745;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .topic-title {
+            font-size: 24px;
+            color: #1f4bb8;
+            margin-bottom: 15px;
+        }
+        .completion-message {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .stats {
+            background: #e9f7ef;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .stats h3 {
+            margin: 0 0 10px 0;
+            color: #1f4bb8;
+        }
+        .action-buttons {
+            margin-top: 30px;
+        }
+        button {
+            margin: 8px 12px;
+            padding: 12px 24px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .restart-btn {
+            background: #1f4bb8;
+            color: white;
+        }
+        .restart-btn:hover {
+            background: #183b8f;
+        }
+        .topics-btn {
+            background: #28a745;
+            color: white;
+        }
+        .topics-btn:hover {
+            background: #218838;
+        }
+        .home-btn {
+            background: #6c757d;
+            color: white;
+        }
+        .home-btn:hover {
+            background: #5a6268;
+        }
+        footer {
+            text-align: center;
+            margin: 18px 0 30px;
+            color: #6c7384;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-left">
+            <h1>Welcome to Let's Go Math!</h1>
+            <div class="subtitle">{{ topic.title }} Complete!</div>
+        </div>
+        <div class="header-right">
+            {% if user %} 
+                <span style="color: white; margin-right: 15px;">Welcome, {{ user.name }}!</span>
+                <form action="/logout" method="GET" style="display: inline; margin: 0;">
+                    <button type="submit" class="header-signin-btn" style="background: #dc3545; padding: 6px 12px;">Logout</button>
+                </form>
+            {% else %}
+                <form action="/login" method="GET" style="margin: 0;">
+                    <button type="submit" class="header-signin-btn">Sign In</button>
+                </form>
+            {% endif %}
+        </div>
+    </header>
+    
+    <main class="container">
+        <div class="completion-box">
+            <div class="celebration-emoji">🎉🏆🎉</div>
+            <div class="completion-title">Congratulations!</div>
+            <div class="topic-title">{{ topic.title }}</div>
+            <div class="completion-message">
+                You've successfully completed all {{ topic.problems|length }} problems in this topic!<br>
+                Great work mastering {{ topic.title.lower() }}!
+            </div>
+            
+            <div class="stats">
+                <h3>Topic Complete</h3>
+                <p><strong>Problems Solved:</strong> {{ topic.problems|length }} out of {{ topic.problems|length }}</p>
+                <p><strong>Topic:</strong> {{ topic.description }}</p>
+                {% if user %}
+                <p><em>Your progress has been saved to your account!</em></p>
+                {% else %}
+                <p><em>Want to track your progress? <a href="/signup" style="color: #1f4bb8;">Create an account</a> to save your achievements across all topics!</em></p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <form action="/topics" method="GET" style="display: inline;">
+                <button type="submit" class="topics-btn">Choose Another Topic</button>
+            </form>
+            <form action="/restart/{{ topic_id }}" method="POST" style="display: inline;">
+                <button type="submit" class="restart-btn">Practice Again</button>
+            </form>
+            <form action="/" method="GET" style="display: inline;">
+                <button type="submit" class="home-btn">Back to Home</button>
+            </form>
+        </div>
+    </main>
+    
+    <footer>
+        © 2026 Let's Go Math
+    </footer>
+</body>
+</html>

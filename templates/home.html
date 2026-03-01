@@ -97,11 +97,16 @@
     </header>
     <main class="container">
         <h2>Home</h2>
-        <p>Practice simple algebra problems and receive instant feedback.</p>
+        <p>Practice algebra problems across different topics and receive instant feedback.</p>
 
-        <form action="/start" method="GET">
-            <button type="submit">Start Practice</button>
-        </form>
+        <div style="margin: 20px 0; text-align: center;">
+            <form action="/topics" method="GET" style="display: inline; margin-right: 10px;">
+                <button type="submit" style="background: #28a745; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 16px;">Browse All Topics</button>
+            </form>
+            <form action="/start" method="GET" style="display: inline;">
+                <button type="submit">Quick Start (Linear Equations)</button>
+            </form>
+        </div>
     </main>
     <footer>
         © 2026 Let's Go Math

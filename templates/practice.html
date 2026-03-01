@@ -49,24 +49,26 @@
             font-size: 38px;
             font-family: Georgia, serif;
             text-align: center;
-            margin: 25px 0;
-            letter-spacing: 1px;
-        }
-        .equation em {
-            font-style: italic;
+            margin: 24px 0;
+            padding: 18px;
+            background: white;
+            border: 2px solid #e3e8f5;
+            border-radius: 10px;
         }
         label {
             display: block;
-            margin-top: 12px;
+            margin-top: 18px;
+            margin-bottom: 6px;
             font-weight: bold;
+            color: #1f4bb8;
         }
-        input[type="text"] {
+        input {
             width: 100%;
-            padding: 10px;
-            margin-top: 8px;
+            padding: 12px;
+            border: 2px solid #e3e8f5;
             border-radius: 8px;
-            border: 1px solid #cfd7f1;
             font-size: 16px;
+            font-family: Georgia, serif;
             box-sizing: border-box;
         }
         button {
@@ -83,20 +85,36 @@
             background: #183b8f;
         }
         .feedback {
-            margin-top: 14px;
-            padding: 10px;
+            margin-top: 16px;
+            padding: 12px 16px;
             border-radius: 8px;
             font-weight: bold;
+            text-align: center;
         }
-        .ok {
-            background: #e8f7ee;
-            color: #167a3f;
-            border: 1px solid #bfe9cf;
+        .feedback.ok {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
         }
-        .bad {
-            background: #fff0f0;
-            color: #a81d1d;
-            border: 1px solid #f1b3b3;
+        .feedback.bad {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .topic-nav {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .back-link {
+            color: #1f4bb8;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .back-link:hover {
+            text-decoration: underline;
         }
         footer {
             text-align: center;
@@ -108,17 +126,25 @@
 </head>
 <body>
     <header>
-        <h1>Welcome to Let's Go Math!</h1>
-        <div class="subtitle">Algebra Practice</div>
+        <h1>{{ topic.title }} Practice</h1>
+        <div class="subtitle">Problem {{ problem_number }} of {{ total_problems }}</div>
     </header>
+    
     <main class="container">
-        <h2>Practice Problem</h2>
-        <form action="/" method="GET">
-            <button type="submit">&larr; Back to Home</button>
-        </form>
+        <div class="topic-nav">
+            <a href="/topics" class="back-link">← Back to Topics</a> | 
+            <a href="/topic/{{ topic_id }}" class="back-link">{{ topic.title }} Overview</a>
+        </div>
+        
+        <h2>Practice Problem {{ problem_number }}</h2>
+        
         <div class="problem-box">
             <div class="instruction">
-                {{ instruction }} <em>{{ variable }}</em>.
+                {% if variable %}
+                    {{ instruction }} <em>{{ variable }}</em>.
+                {% else %}
+                    {{ instruction }}
+                {% endif %}
             </div>
             <div class="equation">
                 {{ equation }}
@@ -131,6 +157,7 @@
                     name="answer"
                     placeholder="Type your answer..."
                     value="{{ user_answer }}"
+                    autofocus
                 />
                 <button type="submit">Submit</button>
             </form>
@@ -146,12 +173,13 @@
                 {% if problem_number < total_problems %}
                     <button type="submit">Next Problem</button>
                 {% else %}
-                    <button type="submit">Finish Practice</button>
+                    <button type="submit">Finish Topic</button>
                 {% endif %}
             </form>
             {% endif %}
         </div>
     </main>
+    
     <footer>
         © 2026 Let's Go Math
     </footer>
