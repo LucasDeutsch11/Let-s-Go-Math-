@@ -269,6 +269,20 @@ def practice():
                         user_values = set(user_answer_clean.split(","))
                         correct_values = set(correct_answer_clean.split(","))
                         is_correct = user_values == correct_values
+                    # Check if this is a factored expression (contains parentheses with multiplication)
+                    elif "(" in correct_answer_clean and ")" in correct_answer_clean and "(" in user_answer_clean and ")" in user_answer_clean:
+                        # Extract factors from both answers
+                        import re
+                        # Find all parenthetical expressions
+                        correct_factors = re.findall(r'\([^)]+\)', correct_answer_clean)
+                        user_factors = re.findall(r'\([^)]+\)', user_answer_clean)
+                        
+                        # Convert to sets to ignore order
+                        correct_factors_set = set(correct_factors)
+                        user_factors_set = set(user_factors)
+                        
+                        # Check if the sets match (ignoring order)
+                        is_correct = correct_factors_set == user_factors_set
                     else:
                         # Regular string comparison for other answer types
                         is_correct = user_answer_clean.lower() == correct_answer_clean.lower()
