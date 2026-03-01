@@ -52,13 +52,24 @@ def session_login():
     if not firebase_available:
         return jsonify({"error": "Authentication not available"}), 503
     try:
-        id_token = request.json.get("idToken")
+        data = request.get_json()
+        if not data or "idToken" not in data:
+            return jsonify({"error": "No ID token provided"}), 400
+            
+        id_token = data.get("idToken")
+        print(f"Attempting to verify ID token for session login")
+        
         decoded_token = auth.verify_id_token(id_token)
+        print(f"Token verified for user: {decoded_token.get('email')}")
+        
         session["user_id"] = decoded_token["uid"]
         session["user_email"] = decoded_token.get("email")
         session["user_name"] = decoded_token.get("name", decoded_token.get("email", "User"))
+        
+        print(f"Session created for user: {session['user_email']}")
         return jsonify({"status": "success"})
     except Exception as e:
+        print(f"Session login error: {str(e)}")
         return jsonify({"error": str(e)}), 400
 
 @app.route("/dashboard")

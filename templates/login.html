@@ -140,9 +140,16 @@
         return;
     }
 
+    console.log("Attempting login for email:", email);
+
     try {
+        console.log("Calling Firebase signInWithEmailAndPassword...");
         const userCred = await signInWithEmailAndPassword(auth, email, password);
+        console.log("Firebase login successful:", userCred.user.email);
+        
+        console.log("Getting ID token...");
         const token = await userCred.user.getIdToken();
+        console.log("ID token obtained, calling session login...");
 
         const response = await fetch("/api/sessionLogin", {
             method: "POST",
@@ -150,13 +157,29 @@
             body: JSON.stringify({ idToken: token})
         });
 
+        console.log("Session login response status:", response.status);
+        
         if (response.ok) {
+            console.log("Login successful, redirecting...");
             window.location.href = "/";
         } else {
-            alert("Login failed. Please try again.");
+            const errorData = await response.text();
+            console.error("Session login failed:", errorData);
+            alert("Login failed: " + errorData);
         }
     } catch (error) {
-        alert("Error: " + error.message);
+        console.error("Login error:", error);
+        if (error.code === 'auth/wrong-password') {
+            alert("Incorrect password. Please try again.");
+        } else if (error.code === 'auth/user-not-found') {
+            alert("No account found with this email address.");
+        } else if (error.code === 'auth/invalid-email') {
+            alert("Invalid email address format.");
+        } else if (error.code === 'auth/too-many-requests') {
+            alert("Too many failed login attempts. Please try again later.");
+        } else {
+            alert("Login error: " + error.message);
+        }
     }
   };
 </script>
