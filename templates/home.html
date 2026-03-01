@@ -89,8 +89,8 @@
                     <button type="submit" class="header-signin-btn" style="background: #dc3545; padding: 6px 12px;">Logout</button>
                 </form>
             {% else %}
-                <form action="/start" method="GET" style="margin: 0;">
-                    <button type="submit" class="header-signin-btn">Start Practice</button>
+                <form action="/login" method="GET" style="margin: 0;">
+                    <button type="submit" class="header-signin-btn">Sign In</button>
                 </form>
             {% endif %}
         </div>
@@ -102,19 +102,6 @@
         <form action="/start" method="GET">
             <button type="submit">Start Practice</button>
         </form>
-
-        {% if not user %}
-        <div style="margin-top: 30px; padding: 20px; border: 1px solid #e3e8f5; border-radius: 10px; background: #f9fbff; text-align: center;">
-            <h3 style="margin-top: 0; color: #1f4bb8;">Want to track your progress?</h3>
-            <p>Create an account to save your scores and see your improvement over time!</p>
-            <form action="/login" method="GET" style="display: inline;">
-                <button type="submit" style="background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 6px; margin-right: 10px;">Sign In</button>
-            </form>
-            <form action="/signup" method="GET" style="display: inline;">
-                <button type="submit" style="background: #17a2b8; color: white; border: none; padding: 10px 20px; border-radius: 6px;">Sign Up</button>
-            </form>
-        </div>
-        {% endif %}
     </main>
     <footer>
         © 2026 Let's Go Math
