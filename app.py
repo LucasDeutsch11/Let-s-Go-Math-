@@ -257,9 +257,9 @@ def practice():
             feedback = "Please enter an answer."
         else:
             try:
-                # Handle both numeric and string answers
+                # Handle different answer types
                 if isinstance(problem["answer"], str):
-                    # For algebraic expressions, normalize whitespace
+                    # For algebraic expressions and coordinate pairs, normalize whitespace
                     user_answer_clean = user_answer.replace(" ", "")
                     correct_answer_clean = str(problem["answer"]).replace(" ", "")
                     if user_answer_clean.lower() == correct_answer_clean.lower():
@@ -270,15 +270,18 @@ def practice():
                     else:
                         feedback = "Incorrect!"
                 else:
-                    # For numeric answers
-                    user_num = int(user_answer)
-                    if user_num == problem["answer"]:
-                        feedback = "Correct!"
-                        # Update progress for logged-in users
-                        if "user_id" in session:
-                            update_user_progress(topic_id, idx)
-                    else:
-                        feedback = "Incorrect!"
+                    # For numeric answers, try to convert to int
+                    try:
+                        user_num = int(user_answer)
+                        if user_num == problem["answer"]:
+                            feedback = "Correct!"
+                            # Update progress for logged-in users
+                            if "user_id" in session:
+                                update_user_progress(topic_id, idx)
+                        else:
+                            feedback = "Incorrect!"
+                    except ValueError:
+                        feedback = "Please enter a valid number."
             except ValueError:
                 feedback = "Please enter a valid answer."
 
