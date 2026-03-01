@@ -163,6 +163,9 @@
             <div class="subtitle">Choose your algebra topic</div>
         </div>
         <div class="header-right">
+            <form action="/" method="GET" style="display: inline; margin: 0 15px 0 0;">
+                <button type="submit" class="header-signin-btn" style="background: #6c757d; padding: 6px 12px;">← Home</button>
+            </form>
             {% if user %} 
                 <span style="color: white; margin-right: 15px;">Welcome, {{ user.name }}!</span>
                 <form action="/logout" method="GET" style="display: inline; margin: 0;">

@@ -87,13 +87,13 @@ MATH_TOPICS = {
     },
     "quadratics": {
         "title": "Quadratic Equations",
-        "description": "Solve quadratic equations using various methods",
+        "description": "Solve quadratic equations - list all solutions separated by commas",
         "problems": [
-            {"instruction": "Solve for", "variable": "x", "equation": "x² - 4 = 0", "answer": 2},
-            {"instruction": "Solve for", "variable": "x", "equation": "x² + 2x - 3 = 0", "answer": 1},
-            {"instruction": "Solve for", "variable": "x", "equation": "(x - 1)² = 4", "answer": 3},
-            {"instruction": "Solve for", "variable": "x", "equation": "x² - 6x + 8 = 0", "answer": 4},
-            {"instruction": "Solve for", "variable": "x", "equation": "2x² - 8 = 0", "answer": 2},
+            {"instruction": "Solve for", "variable": "x", "equation": "x² - 4 = 0", "answer": "-2,2"},
+            {"instruction": "Solve for", "variable": "x", "equation": "x² + 2x - 3 = 0", "answer": "-3,1"},
+            {"instruction": "Solve for", "variable": "x", "equation": "(x - 1)² = 4", "answer": "-1,3"},
+            {"instruction": "Solve for", "variable": "x", "equation": "x² - 6x + 8 = 0", "answer": "2,4"},
+            {"instruction": "Solve for", "variable": "x", "equation": "2x² - 8 = 0", "answer": "-2,2"},
         ]
     },
     "word_problems": {
