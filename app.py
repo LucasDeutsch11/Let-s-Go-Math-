@@ -58,9 +58,9 @@ MATH_TOPICS = {
         "problems": [
             {"instruction": "Simplify", "variable": "", "equation": "2³", "answer": 8},
             {"instruction": "Simplify", "variable": "", "equation": "5²", "answer": 25},
-            {"instruction": "Solve for", "variable": "x", "equation": "x² = 16", "answer": 4},
+            {"instruction": "Solve for", "variable": "x", "equation": "x² = 16", "answer": "-4,4"},
             {"instruction": "Simplify", "variable": "", "equation": "3⁴", "answer": 81},
-            {"instruction": "Solve for", "variable": "x", "equation": "2^x = 8", "answer": 3},
+            {"instruction": "Solve for", "variable": "x", "equation": "2ˣ = 8", "answer": 3},
         ]
     },
     "polynomials": {
