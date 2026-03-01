@@ -43,13 +43,13 @@ MATH_TOPICS = {
     },
     "systems": {
         "title": "Systems of Equations",
-        "description": "Solve systems of linear equations",
+        "description": "Solve systems of linear equations - answer in (x,y) format",
         "problems": [
-            {"instruction": "Find x when", "variable": "x", "equation": "x + y = 7, x - y = 1", "answer": 4},
-            {"instruction": "Find x when", "variable": "x", "equation": "2x + y = 10, x - y = 2", "answer": 4},
-            {"instruction": "Find y when", "variable": "y", "equation": "x + 2y = 8, x = 2", "answer": 3},
-            {"instruction": "Find x when", "variable": "x", "equation": "3x + y = 11, y = 2", "answer": 3},
-            {"instruction": "Find y when", "variable": "y", "equation": "x + y = 5, 2x - y = 1", "answer": 3},
+            {"instruction": "Solve for x and y", "variable": "(x,y)", "equation": "x + y = 7, x - y = 1", "answer": "(4,3)"},
+            {"instruction": "Solve for x and y", "variable": "(x,y)", "equation": "2x + y = 10, x - y = 2", "answer": "(4,2)"},
+            {"instruction": "Solve for x and y", "variable": "(x,y)", "equation": "x + 2y = 8, x = 2", "answer": "(2,3)"},
+            {"instruction": "Solve for x and y", "variable": "(x,y)", "equation": "3x + y = 11, y = 2", "answer": "(3,2)"},
+            {"instruction": "Solve for x and y", "variable": "(x,y)", "equation": "x + y = 5, 2x - y = 1", "answer": "(2,3)"},
         ]
     },
     "exponents": {
