@@ -143,7 +143,11 @@
             {% endif %}
             {% if feedback == "Correct!" %}
             <form action="/next" method="POST">
-                <button type="submit">Next Problem</button>
+                {% if problem_number < total_problems %}
+                    <button type="submit">Next Problem</button>
+                {% else %}
+                    <button type="submit">Finish Practice</button>
+                {% endif %}
             </form>
             {% endif %}
         </div>

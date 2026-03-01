@@ -127,8 +127,28 @@ def practice():
 @app.route("/next", methods=["POST"])
 def next_problem():
     idx = session.get("problem_index", 0)
-    idx = (idx + 1) % len(PROBLEMS)
+    idx += 1
+    
+    # Check if all problems are completed
+    if idx >= len(PROBLEMS):
+        return redirect(url_for("completed"))
+    
     session["problem_index"] = idx
+    return redirect(url_for("practice"))
+
+@app.route("/completed")
+def completed():
+    user_info = None
+    if "user_id" in session:
+        user_info = {
+            "email": session.get("user_email"),
+            "name": session.get("user_name", "User")
+        }
+    return render_template("completed.html", user=user_info)
+
+@app.route("/restart", methods=["POST"])
+def restart():
+    session["problem_index"] = 0
     return redirect(url_for("practice"))
 
 if __name__ == '__main__':
