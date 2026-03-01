@@ -6,25 +6,14 @@ from firebase_admin import credentials, auth
 # Initialize Firebase Admin (optional for production)
 firebase_available = False
 try:
-    import signal
-    
-    def timeout_handler(signum, frame):
-        raise TimeoutError("Firebase initialization timeout")
-    
-    # Set 5-second timeout for Firebase initialization
-    signal.signal(signal.SIGALRM, timeout_handler)
-    signal.alarm(5)
-    
+    # Simple initialization without signal timeout (Render-compatible)
     cred = credentials.Certificate("serviceAccountKey.json")
     firebase_admin.initialize_app(cred)
     firebase_available = True
     print("Firebase initialized successfully")
-    
-    signal.alarm(0)  # Cancel timeout
 except Exception as e:
     print(f"Firebase initialization failed (running without auth): {e}")
     firebase_available = False
-    signal.alarm(0)  # Cancel timeout
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "dev-secret")
