@@ -256,31 +256,41 @@ def practice():
         if user_answer == "":
             feedback = "Please enter an answer."
         else:
-            # Handle different answer types
-            if isinstance(problem["answer"], str):
-                # For algebraic expressions and coordinate pairs, normalize whitespace
-                user_answer_clean = user_answer.replace(" ", "")
-                correct_answer_clean = str(problem["answer"]).replace(" ", "")
-                if user_answer_clean.lower() == correct_answer_clean.lower():
-                    feedback = "Correct!"
-                    # Update progress for logged-in users
-                    if "user_id" in session:
-                        update_user_progress(topic_id, idx)
-                else:
-                    feedback = "Incorrect!"
-            else:
-                # For numeric answers, try to convert to int
-                try:
-                    user_num = int(user_answer)
-                    if user_num == problem["answer"]:
+            try:
+                # Handle different answer types
+                if isinstance(problem["answer"], str):
+                    # For algebraic expressions and coordinate pairs, normalize whitespace
+                    user_answer_clean = user_answer.replace(" ", "")
+                    correct_answer_clean = str(problem["answer"]).replace(" ", "")
+                    if user_answer_clean.lower() == correct_answer_clean.lower():
                         feedback = "Correct!"
                         # Update progress for logged-in users
                         if "user_id" in session:
-                            update_user_progress(topic_id, idx)
+                            try:
+                                update_user_progress(topic_id, idx)
+                            except Exception as e:
+                                print(f"Progress update error: {e}")
                     else:
                         feedback = "Incorrect!"
-                except ValueError:
-                    feedback = "Please enter a valid number."
+                else:
+                    # For numeric answers, try to convert to int
+                    try:
+                        user_num = int(user_answer)
+                        if user_num == problem["answer"]:
+                            feedback = "Correct!"
+                            # Update progress for logged-in users
+                            if "user_id" in session:
+                                try:
+                                    update_user_progress(topic_id, idx)
+                                except Exception as e:
+                                    print(f"Progress update error: {e}")
+                        else:
+                            feedback = "Incorrect!"
+                    except ValueError:
+                        feedback = "Please enter a valid number."
+            except Exception as e:
+                print(f"Answer checking error: {e}")
+                feedback = "An error occurred. Please try again."
 
     return render_template(
         "practice.html", 
@@ -304,15 +314,19 @@ def update_user_progress(topic_id, problem_index):
         session["progress"][topic_id] = {
             "completed": 0,
             "total": len(MATH_TOPICS[topic_id]["problems"]),
-            "solved_problems": set()
+            "solved_problems": []
         }
     
-    # Add this problem to solved problems
-    session["progress"][topic_id]["solved_problems"].add(problem_index)
-    session["progress"][topic_id]["completed"] = len(session["progress"][topic_id]["solved_problems"])
+    # Ensure solved_problems is a list
+    if not isinstance(session["progress"][topic_id]["solved_problems"], list):
+        session["progress"][topic_id]["solved_problems"] = []
     
-    # Convert set to list for JSON serialization
-    session["progress"][topic_id]["solved_problems"] = list(session["progress"][topic_id]["solved_problems"])
+    # Add this problem to solved problems if not already solved
+    if problem_index not in session["progress"][topic_id]["solved_problems"]:
+        session["progress"][topic_id]["solved_problems"].append(problem_index)
+    
+    # Update completed count
+    session["progress"][topic_id]["completed"] = len(session["progress"][topic_id]["solved_problems"])
     session.modified = True
 
 @app.route("/next", methods=["POST"])
