@@ -310,10 +310,17 @@
             {% for answer in answers %}
                 <div class="answer-item {{ 'answer-correct' if answer.is_correct else 'answer-incorrect' }}">
                     <div class="answer-info">
-                        <div class="answer-topic">Round {{ answer.round }} • {{ answer.question + 1 }}</div>
+                        <div class="answer-topic">Round {{ answer.round }} • Question {{ answer.question + 1 }} • {{ answer.topic if answer.topic else 'Math' }}</div>
+                        <div style="font-size: 14px; color: #333; margin: 5px 0; font-weight: bold;">
+                            Problem: {{ answer.equation if answer.equation else answer.instruction }}
+                        </div>
                         {% if answer.user_answer %}
-                            <div style="font-size: 14px; color: #666; margin-bottom: 5px;">
+                            <div style="font-size: 14px; color: #dc3545; margin-bottom: 3px;">
                                 <strong>Your Answer:</strong> {{ answer.user_answer }}
+                            </div>
+                        {% else %}
+                            <div style="font-size: 14px; color: #dc3545; margin-bottom: 3px;">
+                                <strong>Your Answer:</strong> (No answer submitted)
                             </div>
                         {% endif %}
                         <div style="font-size: 14px; color: #28a745;">

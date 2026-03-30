@@ -266,12 +266,12 @@ i <!DOCTYPE html>
             
             <form id="answerForm">
                 <div class="answer-section">
-                    {% if question.instruction == "Solve for" and question.variable == "x" and not ('<' in question.answer|string or '>' in question.answer|string or '(' in question.answer|string) %}
+                    {% if question.instruction == "Solve for" and question.variable == "x" %}
                         <label for="answer">Your Answer:</label>
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <span style="font-size: 18px; font-weight: bold; color: #1f4bb8;">x =</span>
-                            <input type="text" id="answer" name="answer" autocomplete="off" required style="flex: 1;">
+                        <div style="font-size: 13px; color: #666; margin-bottom: 8px; font-style: italic;">
+                            Example: x=5 or just 5
                         </div>
+                        <input type="text" id="answer" name="answer" autocomplete="off" required>
                     {% else %}
                         <label for="answer">Your Answer:</label>
                         <input type="text" id="answer" name="answer" autocomplete="off" required>
