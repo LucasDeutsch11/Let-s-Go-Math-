@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+i <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
@@ -393,25 +393,13 @@
             })
             .then(response => response.json())
             .then(data => {
-                // Show feedback
-                feedback.style.display = 'block';
-                if (data.correct) {
-                    feedback.className = 'feedback correct';
-                    feedback.innerHTML = '✅ Correct! +' + data.points + ' points<br>Total Score: ' + data.total_score;
-                } else {
-                    feedback.className = 'feedback incorrect';
-                    feedback.innerHTML = '❌ Incorrect. The answer was: <strong>' + data.correct_answer + '</strong>';
-                }
-                
+                // No feedback shown during challenge - save results for end
                 showNextButton();
             })
             .catch(error => {
                 console.error('Error:', error);
-                feedback.className = 'feedback incorrect';
-                feedback.style.display = 'block';
-                feedback.textContent = 'Error submitting answer. Please try again.';
                 
-                // Re-enable form
+                // Re-enable form on error
                 answerInput.disabled = false;
                 submitBtn.disabled = false;
                 questionAnswered = false;

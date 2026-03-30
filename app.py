@@ -682,35 +682,66 @@ def generate_challenge_questions():
     return all_questions
 
 def check_answer(user_answer, correct_answer):
-    """Check if user answer matches correct answer"""
+    """Check if user answer matches correct answer - improved version"""
     if not user_answer.strip():
         return False
     
     try:
-        # Handle different answer types (same logic as practice mode)
+        # Clean both answers
+        user_answer_clean = user_answer.replace(" ", "").lower()
+        correct_answer_clean = str(correct_answer).replace(" ", "").lower()
+        
+        # Direct match first (handles most cases)
+        if user_answer_clean == correct_answer_clean:
+            return True
+        
+        # Handle string-based answers
         if isinstance(correct_answer, str):
-            user_answer_clean = user_answer.replace(" ", "")
-            correct_answer_clean = str(correct_answer).replace(" ", "")
+            # Check if this is a comma-separated answer (like quadratic solutions)
+            if "," in correct_answer_clean:
+                if "," in user_answer_clean:
+                    user_values = set(user_answer_clean.split(","))
+                    correct_values = set(correct_answer_clean.split(","))
+                    return user_values == correct_values
+                else:
+                    return False
             
-            # Check if this is a comma-separated answer
-            if "," in correct_answer_clean and "," in user_answer_clean:
-                user_values = set(user_answer_clean.split(","))
-                correct_values = set(correct_answer_clean.split(","))
-                return user_values == correct_values
-            
-            # Check if this is a factored expression
+            # Check if this is a factored expression (contains parentheses)
             elif "(" in correct_answer_clean and ")" in correct_answer_clean:
                 import re
-                correct_factors = set(re.findall(r'\([^)]+\)', correct_answer_clean))
-                user_factors = set(re.findall(r'\([^)]+\)', user_answer_clean))
-                return correct_factors == user_factors
+                
+                # Extract factors from correct answer
+                correct_factors = re.findall(r'\([^)]+\)', correct_answer_clean)
+                correct_factors_set = set(correct_factors)
+                
+                # Try to extract factors from user answer
+                if "(" in user_answer_clean and ")" in user_answer_clean:
+                    user_factors = re.findall(r'\([^)]+\)', user_answer_clean)
+                    user_factors_set = set(user_factors)
+                    
+                    # Also check for any leading coefficient
+                    # Extract coefficient before parentheses
+                    correct_coeff = re.findall(r'^(\d*)', correct_answer_clean)
+                    user_coeff = re.findall(r'^(\d*)', user_answer_clean)
+                    
+                    # Check if factors match (ignoring order)
+                    return (correct_factors_set == user_factors_set and 
+                           correct_coeff == user_coeff)
+                else:
+                    return False
             
+            # Regular string comparison for inequality symbols, algebraic expressions
             else:
-                return user_answer_clean.lower() == correct_answer_clean.lower()
+                # Handle inequality symbols and algebraic expressions
+                return user_answer_clean == correct_answer_clean
+                
         else:
-            # Numeric answer
+            # Numeric answer - try to convert both to numbers
             try:
-                return int(user_answer) == correct_answer
+                user_num = float(user_answer_clean)
+                correct_num = float(correct_answer)
+                # Use small tolerance for floating point comparison
+                return abs(user_num - correct_num) < 0.0001
             except ValueError:
                 return False
                 
