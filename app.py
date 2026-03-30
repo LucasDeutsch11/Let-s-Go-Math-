@@ -1,14 +1,19 @@
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 import os
+import time
+import random
 import firebase_admin
-from firebase_admin import credentials, auth
+from firebase_admin import credentials, auth, firestore
+from datetime import datetime, timezone
 
 # Initialize Firebase Admin (optional for production)
 firebase_available = False
+db = None
 try:
     # Simple initialization without signal timeout (Render-compatible)
     cred = credentials.Certificate("serviceAccountKey.json")
     firebase_admin.initialize_app(cred)
+    db = firestore.client()
     firebase_available = True
     print("Firebase initialized successfully")
 except Exception as e:
@@ -17,6 +22,18 @@ except Exception as e:
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "dev-secret")
+
+# Challenge Mode Configuration
+CHALLENGE_CONFIG = {
+    "rounds": 3,
+    "questions_per_round": 3,
+    "time_limit_seconds": 90,  # 1 minute 30 seconds per round
+    "points": {
+        "correct_answer": 100,
+        "speed_bonus_max": 50,  # Max bonus points for speed
+        "round_multipliers": [1, 1.5, 2]  # Round 1, 2, 3 multipliers
+    }
+}
 
 MATH_TOPICS = {
     "linear_equations": {
@@ -117,7 +134,7 @@ def home():
             "email": session.get("user_email"),
             "name": session.get("user_name", "User")
         }
-    return render_template("home.html", user=user_info)
+    return render_template("home_screen.html", user=user_info)
 
 @app.route("/topics")
 def topics():
@@ -139,7 +156,7 @@ def topics():
             else:
                 user_progress[topic_id]["percentage"] = 0
     
-    return render_template("topics.html", user=user_info, topics=MATH_TOPICS, progress=user_progress)
+    return render_template("topics_screen.html", user=user_info, topics=MATH_TOPICS, progress=user_progress)
 
 @app.route("/topic/<topic_id>")
 def topic_detail(topic_id):
@@ -173,11 +190,11 @@ def topic_detail(topic_id):
 
 @app.route("/login", methods=["GET"])
 def login():
-    return render_template("login.html")
+    return render_template("login_screen.html")
 
 @app.route("/signup", methods=["GET"])
 def signup():
-    return render_template("signup.html")
+    return render_template("signup_screen.html")
 
 @app.route("/reset-password", methods=["GET"])
 def reset_password():
@@ -318,7 +335,7 @@ def practice():
                 feedback = "An error occurred. Please try again."
 
     return render_template(
-        "practice.html", 
+        "practice_screen.html", 
         topic=topic,
         topic_id=topic_id,
         instruction=problem["instruction"], 
@@ -385,12 +402,249 @@ def topic_completed(topic_id):
             "name": session.get("user_name", "User")
         }
     
-    return render_template("topic_completed.html", user=user_info, topic=topic, topic_id=topic_id)
+    return render_template("completed_screen.html", user=user_info, topic=topic, topic_id=topic_id)
 
 @app.route("/health")
 def health_check():
     """Simple health check for monitoring"""
     return {"status": "healthy", "firebase": firebase_available}, 200
+
+# ============ CHALLENGE MODE ROUTES ============
+
+@app.route("/challenge")
+def challenge_mode():
+    """Challenge mode selection screen"""
+    user_info = None
+    if "user_id" in session:
+        user_info = {
+            "email": session.get("user_email"),
+            "name": session.get("user_name", "User")
+        }
+    return render_template("challenge_mode.html", user=user_info, config=CHALLENGE_CONFIG)
+
+@app.route("/challenge/start", methods=["POST"])
+def start_challenge():
+    """Start a new challenge game"""
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+    
+    # Initialize challenge session
+    challenge_questions = generate_challenge_questions()
+    session["challenge"] = {
+        "questions": challenge_questions,
+        "current_round": 1,
+        "current_question": 0,
+        "score": 0,
+        "start_time": time.time(),
+        "round_start_time": time.time(),
+        "answers": [],
+        "round_scores": []
+    }
+    
+    return redirect(url_for("challenge_round"))
+
+@app.route("/challenge/round")
+def challenge_round():
+    """Display current challenge question with timer"""
+    if "challenge" not in session or "user_id" not in session:
+        return redirect(url_for("challenge_mode"))
+    
+    challenge = session["challenge"]
+    current_round = challenge["current_round"]
+    current_question = challenge["current_question"]
+    
+    # Check if challenge is completed
+    if current_round > CHALLENGE_CONFIG["rounds"]:
+        return redirect(url_for("challenge_complete"))
+    
+    # Get current question
+    round_questions = challenge["questions"][current_round - 1]
+    if current_question >= len(round_questions):
+        # Move to next round
+        challenge["current_round"] += 1
+        challenge["current_question"] = 0
+        challenge["round_start_time"] = time.time()
+        session["challenge"] = challenge
+        session.modified = True
+        return redirect(url_for("challenge_round"))
+    
+    question = round_questions[current_question]
+    
+    user_info = {
+        "email": session.get("user_email"),
+        "name": session.get("user_name", "User")
+    }
+    
+    return render_template("challenge_round.html", 
+                         user=user_info,
+                         question=question,
+                         round_number=current_round,
+                         question_number=current_question + 1,
+                         total_questions=len(round_questions),
+                         time_limit=CHALLENGE_CONFIG["time_limit_seconds"],
+                         config=CHALLENGE_CONFIG)
+
+@app.route("/challenge/answer", methods=["POST"])
+def submit_challenge_answer():
+    """Submit answer for current challenge question"""
+    if "challenge" not in session or "user_id" not in session:
+        return jsonify({"error": "No active challenge"}), 400
+    
+    challenge = session["challenge"]
+    current_round = challenge["current_round"]
+    current_question = challenge["current_question"]
+    
+    # Get submitted answer
+    user_answer = request.form.get("answer", "").strip()
+    time_taken = time.time() - challenge["round_start_time"]
+    
+    # Get current question
+    round_questions = challenge["questions"][current_round - 1]
+    question = round_questions[current_question]
+    
+    # Check answer correctness
+    is_correct = check_answer(user_answer, question["answer"])
+    
+    # Calculate score
+    points = calculate_challenge_score(is_correct, time_taken, current_round)
+    
+    # Record answer
+    answer_record = {
+        "round": current_round,
+        "question": current_question,
+        "user_answer": user_answer,
+        "correct_answer": question["answer"],
+        "is_correct": is_correct,
+        "time_taken": time_taken,
+        "points": points
+    }
+    challenge["answers"].append(answer_record)
+    challenge["score"] += points
+    
+    # Move to next question
+    challenge["current_question"] += 1
+    
+    # Check if round is complete
+    if challenge["current_question"] >= len(round_questions):
+        # Round completed
+        round_score = sum(ans["points"] for ans in challenge["answers"] 
+                         if ans["round"] == current_round)
+        challenge["round_scores"].append(round_score)
+    
+    session["challenge"] = challenge
+    session.modified = True
+    
+    return jsonify({
+        "correct": is_correct,
+        "points": points,
+        "total_score": challenge["score"],
+        "correct_answer": question["answer"]
+    })
+
+@app.route("/challenge/timeout", methods=["POST"])
+def challenge_timeout():
+    """Handle when timer runs out"""
+    if "challenge" not in session or "user_id" not in session:
+        return jsonify({"error": "No active challenge"}), 400
+    
+    challenge = session["challenge"]
+    current_round = challenge["current_round"]
+    current_question = challenge["current_question"]
+    
+    # Get current question
+    round_questions = challenge["questions"][current_round - 1]
+    question = round_questions[current_question]
+    
+    # Record timeout
+    answer_record = {
+        "round": current_round,
+        "question": current_question,
+        "user_answer": "",
+        "correct_answer": question["answer"],
+        "is_correct": False,
+        "time_taken": CHALLENGE_CONFIG["time_limit_seconds"],
+        "points": 0
+    }
+    challenge["answers"].append(answer_record)
+    
+    # Move to next question
+    challenge["current_question"] += 1
+    
+    # Check if round is complete
+    if challenge["current_question"] >= len(round_questions):
+        round_score = sum(ans["points"] for ans in challenge["answers"] 
+                         if ans["round"] == current_round)
+        challenge["round_scores"].append(round_score)
+    
+    session["challenge"] = challenge
+    session.modified = True
+    
+    return jsonify({"timeout": True, "correct_answer": question["answer"]})
+
+@app.route("/challenge/complete")
+def challenge_complete():
+    """Show challenge completion screen and save score"""
+    if "challenge" not in session or "user_id" not in session:
+        return redirect(url_for("challenge_mode"))
+    
+    challenge = session["challenge"]
+    user_info = {
+        "email": session.get("user_email"),
+        "name": session.get("user_name", "User"),
+        "id": session.get("user_id")
+    }
+    
+    # Calculate final statistics
+    total_time = time.time() - challenge["start_time"]
+    correct_answers = sum(1 for ans in challenge["answers"] if ans["is_correct"])
+    total_questions = len(challenge["answers"])
+    accuracy = (correct_answers / total_questions * 100) if total_questions > 0 else 0
+    
+    # Save score to leaderboard
+    save_score_to_leaderboard(
+        user_info["id"],
+        user_info["name"],
+        challenge["score"],
+        total_time,
+        correct_answers,
+        total_questions
+    )
+    
+    # Clear challenge session
+    del session["challenge"]
+    session.modified = True
+    
+    return render_template("challenge_complete.html",
+                         user=user_info,
+                         score=challenge["score"],
+                         round_scores=challenge["round_scores"],
+                         total_time=total_time,
+                         correct_answers=correct_answers,
+                         total_questions=total_questions,
+                         accuracy=accuracy,
+                         answers=challenge["answers"])
+
+# ============ LEADERBOARD ROUTES ============
+
+@app.route("/leaderboard")
+def leaderboard():
+    """Display leaderboard"""
+    user_info = None
+    if "user_id" in session:
+        user_info = {
+            "email": session.get("user_email"),
+            "name": session.get("user_name", "User"),
+            "id": session.get("user_id")
+        }
+    
+    # Get leaderboard data
+    leaderboard_data = get_leaderboard()
+    user_rank = get_user_rank(session.get("user_id")) if "user_id" in session else None
+    
+    return render_template("leaderboard.html", 
+                         user=user_info,
+                         leaderboard=leaderboard_data,
+                         user_rank=user_rank)
 
 @app.route("/restart/<topic_id>", methods=["POST"])
 def restart_topic(topic_id):
@@ -400,6 +654,207 @@ def restart_topic(topic_id):
     session["current_topic"] = topic_id
     session["problem_index"] = 0
     return redirect(url_for("practice"))
+
+# ============ HELPER FUNCTIONS ============
+
+def generate_challenge_questions():
+    """Generate questions for challenge mode - 3 rounds of 3 questions each"""
+    all_questions = []
+    
+    for round_num in range(CHALLENGE_CONFIG["rounds"]):
+        round_questions = []
+        
+        # Get all available problems from all topics
+        all_problems = []
+        for topic_id, topic_data in MATH_TOPICS.items():
+            for i, problem in enumerate(topic_data["problems"]):
+                problem_copy = problem.copy()
+                problem_copy["topic"] = topic_data["title"]
+                problem_copy["topic_id"] = topic_id
+                all_problems.append(problem_copy)
+        
+        # Randomly select questions for this round
+        selected_problems = random.sample(all_problems, CHALLENGE_CONFIG["questions_per_round"])
+        round_questions.extend(selected_problems)
+        
+        all_questions.append(round_questions)
+    
+    return all_questions
+
+def check_answer(user_answer, correct_answer):
+    """Check if user answer matches correct answer"""
+    if not user_answer.strip():
+        return False
+    
+    try:
+        # Handle different answer types (same logic as practice mode)
+        if isinstance(correct_answer, str):
+            user_answer_clean = user_answer.replace(" ", "")
+            correct_answer_clean = str(correct_answer).replace(" ", "")
+            
+            # Check if this is a comma-separated answer
+            if "," in correct_answer_clean and "," in user_answer_clean:
+                user_values = set(user_answer_clean.split(","))
+                correct_values = set(correct_answer_clean.split(","))
+                return user_values == correct_values
+            
+            # Check if this is a factored expression
+            elif "(" in correct_answer_clean and ")" in correct_answer_clean:
+                import re
+                correct_factors = set(re.findall(r'\([^)]+\)', correct_answer_clean))
+                user_factors = set(re.findall(r'\([^)]+\)', user_answer_clean))
+                return correct_factors == user_factors
+            
+            else:
+                return user_answer_clean.lower() == correct_answer_clean.lower()
+        else:
+            # Numeric answer
+            try:
+                return int(user_answer) == correct_answer
+            except ValueError:
+                return False
+                
+    except Exception as e:
+        print(f"Answer checking error: {e}")
+        return False
+
+def calculate_challenge_score(is_correct, time_taken, round_number):
+    """Calculate score for a challenge question"""
+    if not is_correct:
+        return 0
+    
+    base_points = CHALLENGE_CONFIG["points"]["correct_answer"]
+    
+    # Speed bonus (more points for faster answers)
+    time_limit = CHALLENGE_CONFIG["time_limit_seconds"]
+    speed_ratio = max(0, (time_limit - time_taken) / time_limit)
+    speed_bonus = int(speed_ratio * CHALLENGE_CONFIG["points"]["speed_bonus_max"])
+    
+    # Round multiplier
+    round_multiplier = CHALLENGE_CONFIG["points"]["round_multipliers"][round_number - 1]
+    
+    total_points = int((base_points + speed_bonus) * round_multiplier)
+    return total_points
+
+def save_score_to_leaderboard(user_id, username, score, total_time, correct_answers, total_questions):
+    """Save user score to Firebase leaderboard"""
+    if not firebase_available or not db:
+        # Fallback: save to session for local testing
+        if "local_leaderboard" not in session:
+            session["local_leaderboard"] = []
+        
+        session["local_leaderboard"].append({
+            "user_id": user_id,
+            "username": username,
+            "score": score,
+            "total_time": total_time,
+            "correct_answers": correct_answers,
+            "total_questions": total_questions,
+            "accuracy": (correct_answers / total_questions * 100) if total_questions > 0 else 0,
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        })
+        session.modified = True
+        return
+    
+    try:
+        # Save to Firebase
+        doc_data = {
+            "user_id": user_id,
+            "username": username,
+            "score": score,
+            "total_time": total_time,
+            "correct_answers": correct_answers,
+            "total_questions": total_questions,
+            "accuracy": (correct_answers / total_questions * 100) if total_questions > 0 else 0,
+            "timestamp": datetime.now(timezone.utc)
+        }
+        
+        # Add to leaderboard collection
+        db.collection("leaderboard").add(doc_data)
+        
+        # Also update user's best score if this is better
+        user_ref = db.collection("users").document(user_id)
+        user_doc = user_ref.get()
+        
+        if user_doc.exists:
+            user_data = user_doc.to_dict()
+            best_score = user_data.get("best_score", 0)
+            if score > best_score:
+                user_ref.update({"best_score": score, "best_score_date": datetime.now(timezone.utc)})
+        else:
+            user_ref.set({
+                "username": username, 
+                "best_score": score, 
+                "best_score_date": datetime.now(timezone.utc)
+            })
+            
+    except Exception as e:
+        print(f"Error saving to leaderboard: {e}")
+
+def get_leaderboard(limit=10):
+    """Get top scores from leaderboard"""
+    if not firebase_available or not db:
+        # Fallback: get from session
+        local_scores = session.get("local_leaderboard", [])
+        return sorted(local_scores, key=lambda x: x["score"], reverse=True)[:limit]
+    
+    try:
+        # Get from Firebase
+        query = db.collection("leaderboard").order_by("score", direction=firestore.Query.DESCENDING).limit(limit)
+        docs = query.stream()
+        
+        leaderboard = []
+        for doc in docs:
+            data = doc.to_dict()
+            leaderboard.append(data)
+        
+        return leaderboard
+        
+    except Exception as e:
+        print(f"Error getting leaderboard: {e}")
+        return []
+
+def get_user_rank(user_id):
+    """Get user's rank in leaderboard"""
+    if not user_id:
+        return None
+        
+    if not firebase_available or not db:
+        # Fallback: calculate from session
+        local_scores = session.get("local_leaderboard", [])
+        sorted_scores = sorted(local_scores, key=lambda x: x["score"], reverse=True)
+        
+        for i, entry in enumerate(sorted_scores):
+            if entry["user_id"] == user_id:
+                return {
+                    "rank": i + 1,
+                    "score": entry["score"],
+                    "accuracy": entry["accuracy"]
+                }
+        return None
+    
+    try:
+        # Get user's best score
+        user_ref = db.collection("users").document(user_id)
+        user_doc = user_ref.get()
+        
+        if not user_doc.exists:
+            return None
+            
+        user_best = user_doc.to_dict().get("best_score", 0)
+        
+        # Count how many users have better scores
+        better_scores = db.collection("users").where("best_score", ">", user_best).get()
+        rank = len(better_scores) + 1
+        
+        return {
+            "rank": rank,
+            "score": user_best
+        }
+        
+    except Exception as e:
+        print(f"Error getting user rank: {e}")
+        return None
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Leaderboard - Let's Go Math!</title>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        header {
+            background: #1f4bb8;
+            color: white;
+            padding: 18px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-left {
+            flex-grow: 1;
+        }
+        .header-right {
+            flex-shrink: 0;
+        }
+        .header-signin-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        .leaderboard-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .leaderboard-title {
+            font-size: 36px;
+            color: #ffc107;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        .leaderboard-subtitle {
+            font-size: 16px;
+            color: #6c757d;
+            margin: 10px 0;
+        }
+        .user-rank {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .user-rank h3 {
+            margin: 0 0 10px 0;
+            font-size: 20px;
+        }
+        .user-rank-number {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        .user-rank-score {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        .leaderboard-table {
+            background: #f8f9fa;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 25px 0;
+        }
+        .table-header {
+            background: linear-gradient(135deg, #343a40, #495057);
+            color: white;
+            padding: 15px 20px;
+            display: grid;
+            grid-template-columns: 60px 1fr 120px 120px 120px 100px;
+            gap: 15px;
+            font-weight: bold;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+        .leaderboard-row {
+            padding: 15px 20px;
+            display: grid;
+            grid-template-columns: 60px 1fr 120px 120px 120px 100px;
+            gap: 15px;
+            border-bottom: 1px solid #dee2e6;
+            align-items: center;
+            transition: background-color 0.3s ease;
+        }
+        .leaderboard-row:hover {
+            background: #e9ecef;
+        }
+        .leaderboard-row:last-child {
+            border-bottom: none;
+        }
+        .rank {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .rank.gold {
+            color: #ffd700;
+        }
+        .rank.silver {
+            color: #c0c0c0;
+        }
+        .rank.bronze {
+            color: #cd7f32;
+        }
+        .username {
+            font-weight: bold;
+            color: #343a40;
+        }
+        .score {
+            font-weight: bold;
+            color: #28a745;
+            text-align: right;
+        }
+        .accuracy {
+            color: #007bff;
+            text-align: right;
+        }
+        .total-time {
+            color: #6c757d;
+            text-align: right;
+            font-size: 14px;
+        }
+        .date {
+            color: #6c757d;
+            text-align: right;
+            font-size: 12px;
+        }
+        .trophy-icon {
+            font-size: 24px;
+            margin-right: 8px;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        .empty-state h3 {
+            margin: 0 0 10px 0;
+            color: #343a40;
+        }
+        .action-buttons {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+        .refresh-info {
+            text-align: center;
+            margin-top: 20px;
+            color: #6c757d;
+            font-size: 14px;
+        }
+        @media (max-width: 768px) {
+            .table-header,
+            .leaderboard-row {
+                grid-template-columns: 50px 1fr 80px 80px;
+                gap: 10px;
+            }
+            .total-time,
+            .date {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-left">
+            <h1>Let's Go Math! - Leaderboard</h1>
+        </div>
+        <div class="header-right">
+            {% if user %}
+                <span style="color: white; margin-right: 15px;">Welcome, {{ user.name }}!</span>
+                <form action="/logout" method="GET" style="display: inline; margin: 0;">
+                    <button type="submit" class="header-signin-btn" style="background: #dc3545; padding: 6px 12px;">Logout</button>
+                </form>
+            {% else %}
+                <form action="/login" method="GET" style="margin: 0;">
+                    <button type="submit" class="header-signin-btn">Sign In</button>
+                </form>
+            {% endif %}
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="leaderboard-header">
+            <h2 class="leaderboard-title">🏆 Leaderboard</h2>
+            <p class="leaderboard-subtitle">Top challenge scores from all players</p>
+        </div>
+
+        {% if user and user_rank %}
+            <div class="user-rank">
+                <h3>Your Ranking</h3>
+                <div class="user-rank-number">
+                    {% if user_rank.rank == 1 %}🥇{% elif user_rank.rank == 2 %}🥈{% elif user_rank.rank == 3 %}🥉{% endif %}
+                    #{{ user_rank.rank }}
+                </div>
+                <div class="user-rank-score">Best Score: {{ user_rank.score }}</div>
+                {% if user_rank.accuracy %}
+                    <div class="user-rank-score">Accuracy: {{ "%.1f"|format(user_rank.accuracy) }}%</div>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        {% if leaderboard %}
+            <div class="leaderboard-table">
+                <div class="table-header">
+                    <div>Rank</div>
+                    <div>Player</div>
+                    <div>Score</div>
+                    <div>Accuracy</div>
+                    <div>Time</div>
+                    <div>Date</div>
+                </div>
+                
+                {% for entry in leaderboard %}
+                    <div class="leaderboard-row">
+                        <div class="rank {% if loop.index == 1 %}gold{% elif loop.index == 2 %}silver{% elif loop.index == 3 %}bronze{% endif %}">
+                            {% if loop.index == 1 %}🥇{% elif loop.index == 2 %}🥈{% elif loop.index == 3 %}🥉{% else %}{{ loop.index }}{% endif %}
+                        </div>
+                        <div class="username">{{ entry.username }}</div>
+                        <div class="score">{{ entry.score }}</div>
+                        <div class="accuracy">{{ "%.1f"|format(entry.accuracy) }}%</div>
+                        <div class="total-time">
+                            {% set minutes = (entry.total_time // 60) | int %}
+                            {% set seconds = (entry.total_time % 60) | int %}
+                            {{ minutes }}:{{ '%02d'|format(seconds) }}
+                        </div>
+                        <div class="date">
+                            {% if entry.timestamp %}
+                                {% set timestamp_str = entry.timestamp if entry.timestamp is string else entry.timestamp.isoformat() %}
+                                {{ timestamp_str[:10] }}
+                            {% else %}
+                                Recent
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="refresh-info">
+                Leaderboard updates in real-time • Showing top {{ leaderboard|length }} players
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">🏆</div>
+                <h3>No Scores Yet</h3>
+                <p>Be the first to complete a challenge and claim the top spot!</p>
+            </div>
+        {% endif %}
+
+        <div class="action-buttons">
+            {% if user %}
+                <a href="/challenge" class="btn btn-warning">🚀 Take Challenge</a>
+            {% else %}
+                <a href="/login" class="btn btn-warning">🔓 Login to Compete</a>
+            {% endif %}
+            <a href="/topics" class="btn btn-primary">📚 Practice Mode</a>
+            <a href="/" class="btn btn-secondary">🏠 Home</a>
+        </div>
+    </main>
+
+    <script>
+        // Auto-refresh leaderboard every 30 seconds
+        setTimeout(() => {
+            window.location.reload();
+        }, 30000);
+    </script>
+</body>
+</html>

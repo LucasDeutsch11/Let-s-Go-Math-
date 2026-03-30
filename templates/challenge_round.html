@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Challenge Round {{ round_number }} - Let's Go Math!</title>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        header {
+            background: #1f4bb8;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .round-badge {
+            background: #ffc107;
+            color: #212529;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .question-badge {
+            background: #28a745;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .container {
+            max-width: 700px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+        .timer-section {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .timer-display {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 10px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .timer-label {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        .timer-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 4px;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+        .timer-fill {
+            height: 100%;
+            background: #28a745;
+            border-radius: 4px;
+            transition: width 1s linear, background-color 0.5s ease;
+        }
+        .problem-section {
+            padding: 30px;
+        }
+        .topic-tag {
+            background: #e9ecef;
+            color: #495057;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+        .instruction {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #343a40;
+        }
+        .equation {
+            font-size: 42px;
+            font-family: Georgia, serif;
+            text-align: center;
+            margin: 30px 0;
+            letter-spacing: 1px;
+            color: #1f4bb8;
+            font-weight: bold;
+        }
+        .answer-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            font-size: 18px;
+            color: #343a40;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            border: 3px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 20px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #ffc107;
+            box-shadow: 0 0 10px rgba(255, 193, 7, 0.3);
+        }
+        .symbol-buttons {
+            margin: 15px 0;
+            text-align: center;
+        }
+        .symbol-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            margin: 2px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.2s ease;
+        }
+        .symbol-btn:hover {
+            background: #545b62;
+        }
+        .submit-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+        .submit-btn:hover {
+            background: #218838;
+        }
+        .submit-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+            display: none;
+        }
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .feedback.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .feedback.timeout {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+        .next-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px;
+            display: none;
+        }
+        .next-btn:hover {
+            background: #0056b3;
+        }
+        .progress-info {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #6c757d;
+        }
+        
+        /* Timer color transitions */
+        .timer-warning {
+            background: linear-gradient(135deg, #ffc107, #e0a800) !important;
+        }
+        .timer-danger {
+            background: linear-gradient(135deg, #dc3545, #c82333) !important;
+        }
+        .timer-fill.warning {
+            background: #ffc107 !important;
+        }
+        .timer-fill.danger {
+            background: #dc3545 !important;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-info">
+            <h1 style="margin: 0; font-size: 20px;">Challenge Mode</h1>
+            <div class="round-badge">Round {{ round_number }}/{{ config.rounds }}</div>
+            <div class="question-badge">Question {{ question_number }}/{{ total_questions }}</div>
+        </div>
+        <div>
+            <span style="color: white;">{{ user.name }}</span>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="timer-section" id="timerSection">
+            <div class="timer-label">Time Remaining</div>
+            <div class="timer-display" id="timerDisplay">{{ time_limit }}</div>
+            <div class="timer-bar">
+                <div class="timer-fill" id="timerFill"></div>
+            </div>
+        </div>
+
+        <div class="problem-section">
+            <div class="progress-info">
+                <strong>Round {{ round_number }}</strong> • {{ question_number }} of {{ total_questions }} questions
+            </div>
+            
+            <div class="topic-tag">{{ question.topic }}</div>
+            
+            <div class="instruction">
+                {{ question.instruction }}
+                {% if question.variable %}
+                    <em>{{ question.variable }}</em>
+                {% endif %}
+            </div>
+            
+            <div class="equation">{{ question.equation }}</div>
+            
+            <form id="answerForm">
+                <div class="answer-section">
+                    <label for="answer">Your Answer:</label>
+                    <input type="text" id="answer" name="answer" autocomplete="off" required>
+                    
+                    <div class="symbol-buttons">
+                        <button type="button" class="symbol-btn" onclick="insertSymbol('≤')">≤</button>
+                        <button type="button" class="symbol-btn" onclick="insertSymbol('≥')">≥</button>
+                        <button type="button" class="symbol-btn" onclick="insertSymbol('²')">x²</button>
+                        <button type="button" class="symbol-btn" onclick="insertSymbol('³')">x³</button>
+                        <button type="button" class="symbol-btn" onclick="insertSymbol('⁴')">x⁴</button>
+                        <button type="button" class="symbol-btn" onclick="insertSymbol('ˣ')">xˣ</button>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn" id="submitBtn">Submit Answer</button>
+                </div>
+            </form>
+            
+            <div class="feedback" id="feedback"></div>
+            
+            <button type="button" class="next-btn" id="nextBtn" onclick="nextQuestion()">
+                Next Question →
+            </button>
+        </div>
+    </main>
+
+    <script>
+        let timeLimit = {{ time_limit }};
+        let timeRemaining = timeLimit;
+        let timerInterval;
+        let questionAnswered = false;
+
+        // DOM elements
+        const timerDisplay = document.getElementById('timerDisplay');
+        const timerFill = document.getElementById('timerFill');
+        const timerSection = document.getElementById('timerSection');
+        const answerForm = document.getElementById('answerForm');
+        const answerInput = document.getElementById('answer');
+        const submitBtn = document.getElementById('submitBtn');
+        const feedback = document.getElementById('feedback');
+        const nextBtn = document.getElementById('nextBtn');
+
+        // Start timer when page loads
+        window.onload = function() {
+            startTimer();
+            answerInput.focus();
+        };
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                updateTimerDisplay();
+                
+                if (timeRemaining <= 0 && !questionAnswered) {
+                    handleTimeout();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            timerDisplay.textContent = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+            
+            // Update progress bar
+            const percentage = (timeRemaining / timeLimit) * 100;
+            timerFill.style.width = percentage + '%';
+            
+            // Change colors based on time remaining
+            if (timeRemaining <= 10) {
+                timerSection.className = 'timer-section timer-danger';
+                timerFill.className = 'timer-fill danger';
+            } else if (timeRemaining <= 30) {
+                timerSection.className = 'timer-section timer-warning';
+                timerFill.className = 'timer-fill warning';
+            }
+        }
+
+        function handleTimeout() {
+            clearInterval(timerInterval);
+            questionAnswered = true;
+            
+            // Disable form
+            answerInput.disabled = true;
+            submitBtn.disabled = true;
+            
+            // Show timeout feedback
+            feedback.className = 'feedback timeout';
+            feedback.style.display = 'block';
+            feedback.innerHTML = '⏰ Time\'s up! The correct answer was: <strong>' + '{{ question.answer }}' + '</strong>';
+            
+            // Send timeout to server
+            fetch('/challenge/timeout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                showNextButton();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNextButton();
+            });
+        }
+
+        // Handle form submission
+        answerForm.onsubmit = function(e) {
+            e.preventDefault();
+            
+            if (questionAnswered) return;
+            
+            questionAnswered = true;
+            clearInterval(timerInterval);
+            
+            // Disable form
+            answerInput.disabled = true;
+            submitBtn.disabled = true;
+            
+            // Submit answer
+            const formData = new FormData(answerForm);
+            
+            fetch('/challenge/answer', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Show feedback
+                feedback.style.display = 'block';
+                if (data.correct) {
+                    feedback.className = 'feedback correct';
+                    feedback.innerHTML = '✅ Correct! +' + data.points + ' points<br>Total Score: ' + data.total_score;
+                } else {
+                    feedback.className = 'feedback incorrect';
+                    feedback.innerHTML = '❌ Incorrect. The answer was: <strong>' + data.correct_answer + '</strong>';
+                }
+                
+                showNextButton();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                feedback.className = 'feedback incorrect';
+                feedback.style.display = 'block';
+                feedback.textContent = 'Error submitting answer. Please try again.';
+                
+                // Re-enable form
+                answerInput.disabled = false;
+                submitBtn.disabled = false;
+                questionAnswered = false;
+            });
+        };
+
+        function showNextButton() {
+            nextBtn.style.display = 'block';
+            nextBtn.focus();
+        }
+
+        function nextQuestion() {
+            window.location.href = '/challenge/round';
+        }
+
+        function insertSymbol(symbol) {
+            const cursor = answerInput.selectionStart;
+            const text = answerInput.value;
+            answerInput.value = text.slice(0, cursor) + symbol + text.slice(cursor);
+            answerInput.setSelectionRange(cursor + symbol.length, cursor + symbol.length);
+            answerInput.focus();
+        }
+
+        // Handle Enter key for next question
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && questionAnswered && nextBtn.style.display === 'block') {
+                nextQuestion();
+            }
+        });
+    </script>
+</body>
+</html>
