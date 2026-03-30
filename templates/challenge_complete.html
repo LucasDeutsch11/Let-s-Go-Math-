@@ -311,12 +311,14 @@
                 <div class="answer-item {{ 'answer-correct' if answer.is_correct else 'answer-incorrect' }}">
                     <div class="answer-info">
                         <div class="answer-topic">Round {{ answer.round }} • {{ answer.question + 1 }}</div>
-                        <div class="answer-equation">{{ answer.correct_answer }}</div>
-                        {% if not answer.is_correct and answer.user_answer %}
-                            <div style="font-size: 12px; color: #dc3545;">
-                                Your answer: {{ answer.user_answer }}
+                        {% if answer.user_answer %}
+                            <div style="font-size: 14px; color: #666; margin-bottom: 5px;">
+                                <strong>Your Answer:</strong> {{ answer.user_answer }}
                             </div>
                         {% endif %}
+                        <div style="font-size: 14px; color: #28a745;">
+                            <strong>Correct Answer:</strong> {{ answer.correct_answer }}
+                        </div>
                     </div>
                     <div class="answer-result">
                         <div class="answer-status">

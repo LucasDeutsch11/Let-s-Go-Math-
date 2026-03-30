@@ -233,7 +233,8 @@ i <!DOCTYPE html>
             <div class="round-badge">Round {{ round_number }}/{{ config.rounds }}</div>
             <div class="question-badge">Question {{ question_number }}/{{ total_questions }}</div>
         </div>
-        <div>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <a href="/" style="color: white; text-decoration: none; padding: 5px 10px; background: rgba(255,255,255,0.2); border-radius: 3px; font-size: 12px;">🏠 Quit</a>
             <span style="color: white;">{{ user.name }}</span>
         </div>
     </header>
