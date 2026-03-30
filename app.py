@@ -516,7 +516,10 @@ def submit_challenge_answer():
         "correct_answer": question["answer"],
         "is_correct": is_correct,
         "time_taken": time_taken,
-        "points": points
+        "points": points,
+        "topic": question.get("topic", "Math"),
+        "equation": question.get("equation", ""),
+        "instruction": question.get("instruction", "")
     }
     challenge["answers"].append(answer_record)
     challenge["score"] += points
@@ -563,7 +566,10 @@ def challenge_timeout():
         "correct_answer": question["answer"],
         "is_correct": False,
         "time_taken": CHALLENGE_CONFIG["time_limit_seconds"],
-        "points": 0
+        "points": 0,
+        "topic": question.get("topic", "Math"),
+        "equation": question.get("equation", ""),
+        "instruction": question.get("instruction", "")
     }
     challenge["answers"].append(answer_record)
     
@@ -600,11 +606,16 @@ def challenge_complete():
     total_questions = len(challenge["answers"])
     accuracy = (correct_answers / total_questions * 100) if total_questions > 0 else 0
     
+    # Store challenge data before clearing session
+    final_score = challenge["score"]
+    final_round_scores = challenge["round_scores"]
+    final_answers = challenge["answers"]
+    
     # Save score to leaderboard
     save_score_to_leaderboard(
         user_info["id"],
         user_info["name"],
-        challenge["score"],
+        final_score,
         total_time,
         correct_answers,
         total_questions
@@ -616,13 +627,13 @@ def challenge_complete():
     
     return render_template("challenge_complete.html",
                          user=user_info,
-                         score=challenge["score"],
-                         round_scores=challenge["round_scores"],
+                         score=final_score,
+                         round_scores=final_round_scores,
                          total_time=total_time,
                          correct_answers=correct_answers,
                          total_questions=total_questions,
                          accuracy=accuracy,
-                         answers=challenge["answers"])
+                         answers=final_answers)
 
 # ============ LEADERBOARD ROUTES ============
 
