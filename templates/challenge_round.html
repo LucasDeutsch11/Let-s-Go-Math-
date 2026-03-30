@@ -386,6 +386,9 @@ i <!DOCTYPE html>
             
             if (questionAnswered) return;
             
+            const userAnswer = answerInput.value.trim();
+            console.log('Submitting answer:', userAnswer); // Debug
+            
             questionAnswered = true;
             clearInterval(timerInterval);
             
@@ -395,6 +398,7 @@ i <!DOCTYPE html>
             
             // Submit answer
             const formData = new FormData(answerForm);
+            console.log('Form data:', formData.get('answer')); // Debug
             
             fetch('/challenge/answer', {
                 method: 'POST',
@@ -402,6 +406,7 @@ i <!DOCTYPE html>
             })
             .then(response => response.json())
             .then(data => {
+                console.log('Server response:', data); // Debug
                 // No feedback shown during challenge - save results for end
                 showNextButton();
             })

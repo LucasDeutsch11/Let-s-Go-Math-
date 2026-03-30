@@ -496,6 +496,7 @@ def submit_challenge_answer():
     
     # Get submitted answer
     user_answer = request.form.get("answer", "").strip()
+    print(f"DEBUG: Received answer: '{user_answer}'")  # Debug
     time_taken = time.time() - challenge["round_start_time"]
     
     # Get current question
@@ -523,6 +524,7 @@ def submit_challenge_answer():
     }
     challenge["answers"].append(answer_record)
     challenge["score"] += points
+    print(f"DEBUG: Stored answer record: {answer_record}")  # Debug
     
     # Move to next question
     challenge["current_question"] += 1
@@ -610,6 +612,7 @@ def challenge_complete():
     final_score = challenge["score"]
     final_round_scores = challenge["round_scores"]
     final_answers = challenge["answers"]
+    print(f"DEBUG: Final answers being passed to template: {final_answers}")  # Debug
     
     # Save score to leaderboard
     save_score_to_leaderboard(
