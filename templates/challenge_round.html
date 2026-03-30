@@ -8,10 +8,9 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #f5f7fb;
             margin: 0;
             padding: 0;
-            min-height: 100vh;
         }
         header {
             background: #1f4bb8;
@@ -24,130 +23,125 @@
         .header-info {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 15px;
         }
         .round-badge {
             background: #ffc107;
-            color: #212529;
-            padding: 5px 12px;
-            border-radius: 15px;
+            color: #000;
+            padding: 4px 10px;
+            border-radius: 3px;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 12px;
         }
         .question-badge {
             background: #28a745;
             color: white;
-            padding: 5px 12px;
-            border-radius: 15px;
+            padding: 4px 10px;
+            border-radius: 3px;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 12px;
         }
         .container {
             max-width: 700px;
             margin: 20px auto;
             background: white;
-            border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            border-radius: 5px;
+            border: 1px solid #ddd;
             overflow: hidden;
         }
         .timer-section {
-            background: linear-gradient(135deg, #dc3545, #c82333);
+            background: #dc3545;
             color: white;
             padding: 20px;
             text-align: center;
         }
         .timer-display {
-            font-size: 48px;
+            font-size: 36px;
             font-weight: bold;
             margin: 10px 0;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
         .timer-label {
-            font-size: 16px;
-            opacity: 0.9;
+            font-size: 14px;
         }
         .timer-bar {
             width: 100%;
-            height: 8px;
+            height: 6px;
             background: rgba(255,255,255,0.3);
-            border-radius: 4px;
-            margin-top: 15px;
+            border-radius: 3px;
+            margin-top: 10px;
             overflow: hidden;
         }
         .timer-fill {
             height: 100%;
             background: #28a745;
-            border-radius: 4px;
-            transition: width 1s linear, background-color 0.5s ease;
+            border-radius: 3px;
+            transition: width 1s linear;
         }
         .problem-section {
-            padding: 30px;
+            padding: 25px;
         }
         .topic-tag {
             background: #e9ecef;
             color: #495057;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 12px;
+            padding: 3px 10px;
+            border-radius: 3px;
+            font-size: 11px;
             font-weight: bold;
             display: inline-block;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
         .instruction {
-            font-size: 20px;
-            margin-bottom: 15px;
-            color: #343a40;
+            font-size: 18px;
+            margin-bottom: 12px;
+            color: #333;
         }
         .equation {
-            font-size: 42px;
+            font-size: 32px;
             font-family: Georgia, serif;
             text-align: center;
-            margin: 30px 0;
-            letter-spacing: 1px;
+            margin: 25px 0;
             color: #1f4bb8;
             font-weight: bold;
         }
         .answer-section {
             background: #f8f9fa;
-            padding: 25px;
-            border-radius: 10px;
-            margin: 20px 0;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border: 1px solid #ddd;
         }
         label {
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             font-weight: bold;
-            font-size: 18px;
-            color: #343a40;
+            font-size: 16px;
+            color: #333;
         }
         input[type="text"] {
             width: 100%;
-            padding: 15px;
-            border: 3px solid #dee2e6;
-            border-radius: 8px;
-            font-size: 20px;
+            padding: 12px;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            font-size: 18px;
             box-sizing: border-box;
-            transition: border-color 0.3s ease;
         }
         input[type="text"]:focus {
             outline: none;
-            border-color: #ffc107;
-            box-shadow: 0 0 10px rgba(255, 193, 7, 0.3);
+            border-color: #007bff;
         }
         .symbol-buttons {
-            margin: 15px 0;
+            margin: 12px 0;
             text-align: center;
         }
         .symbol-btn {
             background: #6c757d;
             color: white;
             border: none;
-            padding: 10px 15px;
+            padding: 8px 12px;
             margin: 2px;
-            border-radius: 6px;
+            border-radius: 3px;
             cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.2s ease;
+            font-size: 14px;
         }
         .symbol-btn:hover {
             background: #545b62;
@@ -156,13 +150,12 @@
             background: #28a745;
             color: white;
             border: none;
-            padding: 15px 30px;
-            border-radius: 8px;
-            font-size: 18px;
+            padding: 12px 25px;
+            border-radius: 4px;
+            font-size: 16px;
             font-weight: bold;
             cursor: pointer;
             width: 100%;
-            transition: background-color 0.3s ease;
         }
         .submit-btn:hover {
             background: #218838;
@@ -172,9 +165,9 @@
             cursor: not-allowed;
         }
         .feedback {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 8px;
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 4px;
             font-weight: bold;
             text-align: center;
             display: none;
@@ -198,13 +191,13 @@
             background: #007bff;
             color: white;
             border: none;
-            padding: 15px 30px;
-            border-radius: 8px;
-            font-size: 18px;
+            padding: 12px 25px;
+            border-radius: 4px;
+            font-size: 16px;
             font-weight: bold;
             cursor: pointer;
             width: 100%;
-            margin-top: 15px;
+            margin-top: 12px;
             display: none;
         }
         .next-btn:hover {
@@ -212,16 +205,18 @@
         }
         .progress-info {
             text-align: center;
-            margin-bottom: 20px;
-            color: #6c757d;
+            margin-bottom: 15px;
+            color: #666;
+            font-size: 14px;
         }
         
-        /* Timer color transitions */
+        /* Timer color changes */
         .timer-warning {
-            background: linear-gradient(135deg, #ffc107, #e0a800) !important;
+            background: #ffc107 !important;
+            color: #000;
         }
         .timer-danger {
-            background: linear-gradient(135deg, #dc3545, #c82333) !important;
+            background: #dc3545 !important;
         }
         .timer-fill.warning {
             background: #ffc107 !important;

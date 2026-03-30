@@ -113,20 +113,20 @@
             </div>
             
             <!-- Challenge Mode -->
-            <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 2px solid #ffc107;">
-                <h3 style="margin: 0 0 10px 0; color: #f57c00;">🎯 Challenge Mode</h3>
+            <div style="margin-bottom: 20px; padding: 15px; background: #fff3cd; border-radius: 5px; border: 1px solid #ffeaa7;">
+                <h3 style="margin: 0 0 10px 0; color: #856404;">Challenge Mode</h3>
                 <p style="margin: 5px 0; font-size: 14px; color: #666;">Timed multi-round competition with mixed algebra problems</p>
                 {% if user %}
                     <form action="/challenge" method="GET" style="display: inline; margin-right: 10px;">
-                        <button type="submit" style="background: #ffc107; color: #212529; border: none; padding: 12px 24px; border-radius: 8px; font-size: 16px; font-weight: bold;">Start Challenge</button>
+                        <button type="submit" style="background: #ffc107; color: #000; border: none; padding: 10px 20px; border-radius: 4px; font-size: 14px; font-weight: bold;">Start Challenge</button>
                     </form>
                     <form action="/leaderboard" method="GET" style="display: inline;">
-                        <button type="submit" style="background: #6f42c1; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 16px;">View Leaderboard</button>
+                        <button type="submit" style="background: #6f42c1; color: white; border: none; padding: 10px 20px; border-radius: 4px; font-size: 14px;">View Leaderboard</button>
                     </form>
                 {% else %}
-                    <p style="margin: 10px 0; font-size: 14px; color: #dc3545;"><strong>Login required to compete in challenges</strong></p>
+                    <p style="margin: 8px 0; font-size: 13px; color: #dc3545;"><strong>Login required to compete in challenges</strong></p>
                     <form action="/login" method="GET" style="display: inline;">
-                        <button type="submit" style="background: #dc3545; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 16px;">Login to Challenge</button>
+                        <button type="submit" style="background: #dc3545; color: white; border: none; padding: 10px 20px; border-radius: 4px; font-size: 14px;">Login to Challenge</button>
                     </form>
                 {% endif %}
             </div>
