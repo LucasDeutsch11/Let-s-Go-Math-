@@ -234,7 +234,7 @@ i <!DOCTYPE html>
             <div class="question-badge">Question {{ question_number }}/{{ total_questions }}</div>
         </div>
         <div style="display: flex; align-items: center; gap: 15px;">
-            <a href="/" style="color: white; text-decoration: none; padding: 5px 10px; background: rgba(255,255,255,0.2); border-radius: 3px; font-size: 12px;">🏠 Quit</a>
+            <a href="/" style="color: white; text-decoration: none; padding: 8px 15px; background: #dc3545; border-radius: 4px; font-size: 14px; font-weight: bold;">Quit Challenge</a>
             <span style="color: white;">{{ user.name }}</span>
         </div>
     </header>
@@ -266,8 +266,16 @@ i <!DOCTYPE html>
             
             <form id="answerForm">
                 <div class="answer-section">
-                    <label for="answer">Your Answer:</label>
-                    <input type="text" id="answer" name="answer" autocomplete="off" required>
+                    {% if question.instruction == "Solve for" and question.variable == "x" and not ('<' in question.answer|string or '>' in question.answer|string or '(' in question.answer|string) %}
+                        <label for="answer">Your Answer:</label>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="font-size: 18px; font-weight: bold; color: #1f4bb8;">x =</span>
+                            <input type="text" id="answer" name="answer" autocomplete="off" required style="flex: 1;">
+                        </div>
+                    {% else %}
+                        <label for="answer">Your Answer:</label>
+                        <input type="text" id="answer" name="answer" autocomplete="off" required>
+                    {% endif %}
                     
                     <div class="symbol-buttons">
                         <button type="button" class="symbol-btn" onclick="insertSymbol('≤')">≤</button>

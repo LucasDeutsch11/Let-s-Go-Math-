@@ -682,7 +682,7 @@ def generate_challenge_questions():
     return all_questions
 
 def check_answer(user_answer, correct_answer):
-    """Check if user answer matches correct answer - improved version"""
+    """Check if user answer matches correct answer - improved version with flexible formats"""
     if not user_answer.strip():
         return False
     
@@ -695,13 +695,42 @@ def check_answer(user_answer, correct_answer):
         if user_answer_clean == correct_answer_clean:
             return True
         
+        # Handle "x=" prefix flexibility for solving equations
+        # Allow both "3" and "x=3" to be correct when answer is just "3"
+        if user_answer_clean.startswith('x=') and not correct_answer_clean.startswith('x='):
+            # User wrote "x=3" but correct answer is just "3"
+            user_value = user_answer_clean[2:]  # Remove "x="
+            if user_value == correct_answer_clean:
+                return True
+        elif correct_answer_clean.startswith('x=') and not user_answer_clean.startswith('x='):
+            # User wrote "3" but correct answer is "x=3"
+            correct_value = correct_answer_clean[2:]  # Remove "x="
+            if user_answer_clean == correct_value:
+                return True
+        
         # Handle string-based answers
         if isinstance(correct_answer, str):
             # Check if this is a comma-separated answer (like quadratic solutions)
             if "," in correct_answer_clean:
                 if "," in user_answer_clean:
-                    user_values = set(user_answer_clean.split(","))
-                    correct_values = set(correct_answer_clean.split(","))
+                    # Split and compare sets, handling x= prefix flexibility
+                    user_values = set()
+                    correct_values = set()
+                    
+                    for val in user_answer_clean.split(","):
+                        val = val.strip()
+                        if val.startswith('x='):
+                            user_values.add(val[2:])
+                        else:
+                            user_values.add(val)
+                    
+                    for val in correct_answer_clean.split(","):
+                        val = val.strip()
+                        if val.startswith('x='):
+                            correct_values.add(val[2:])
+                        else:
+                            correct_values.add(val)
+                    
                     return user_values == correct_values
                 else:
                     return False
@@ -738,7 +767,12 @@ def check_answer(user_answer, correct_answer):
         else:
             # Numeric answer - try to convert both to numbers
             try:
-                user_num = float(user_answer_clean)
+                # Handle x= prefix for numeric answers
+                user_clean = user_answer_clean
+                if user_clean.startswith('x='):
+                    user_clean = user_clean[2:]
+                
+                user_num = float(user_clean)
                 correct_num = float(correct_answer)
                 # Use small tolerance for floating point comparison
                 return abs(user_num - correct_num) < 0.0001
