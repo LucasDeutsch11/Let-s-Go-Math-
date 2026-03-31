@@ -173,7 +173,7 @@
 
     <main class="container">
         <div class="challenge-header">
-            <h2 class="challenge-title">🎯 Timed Challenge</h2>
+            <h2 class="challenge-title">Timed Challenge</h2>
             <p class="challenge-subtitle">Test your algebra skills under pressure!</p>
         </div>
 
@@ -197,7 +197,7 @@
         </div>
 
         <div class="rules-section">
-            <h3 class="rules-title">🏆 How Challenge Mode Works</h3>
+            <h3 class="rules-title">How Challenge Mode Works</h3>
             <div class="rule-item">
                 📝 Answer <strong>{{ config.questions_per_round }} questions</strong> per round from mixed algebra topics
             </div>
@@ -205,7 +205,7 @@
                 ⏱️ Each round has a <span class="rule-highlight">{{ config.time_limit_seconds }}-second time limit</span>
             </div>
             <div class="rule-item">
-                🚀 <strong>Speed matters!</strong> Faster correct answers earn bonus points
+                <strong>Speed matters!</strong> Faster correct answers earn bonus points
             </div>
             <div class="rule-item">
                 📈 <strong>Difficulty increases</strong> with round multipliers: 
@@ -228,7 +228,7 @@
                     Ready to Challenge Yourself?
                 </h3>
                 <form action="/challenge/start" method="POST" style="margin: 0;">
-                    <button type="submit" class="start-btn">🚀 START CHALLENGE</button>
+                    <button type="submit" class="start-btn">START CHALLENGE</button>
                 </form>
             </div>
         {% else %}
@@ -243,13 +243,13 @@
 
         <div style="text-align: center; margin-top: 30px;">
             <form action="/" method="GET" style="display: inline; margin-right: 10px;">
-                <button type="submit" class="nav-btn">🏠 Home</button>
+                <button type="submit" class="nav-btn">Home</button>
             </form>
             <form action="/topics" method="GET" style="display: inline; margin-right: 10px;">
-                <button type="submit" class="nav-btn">📚 Practice Mode</button>
+                <button type="submit" class="nav-btn">Practice Mode</button>
             </form>
             <form action="/leaderboard" method="GET" style="display: inline;">
-                <button type="submit" class="nav-btn">🏆 Leaderboard</button>
+                <button type="submit" class="nav-btn">Leaderboard</button>
             </form>
         </div>
     </main>

@@ -238,7 +238,7 @@
 
     <main class="container">
         <div class="leaderboard-header">
-            <h2 class="leaderboard-title">🏆 Leaderboard</h2>
+            <h2 class="leaderboard-title">Leaderboard</h2>
             <p class="leaderboard-subtitle">Top challenge scores from all players</p>
         </div>
 
@@ -297,7 +297,7 @@
             </div>
         {% else %}
             <div class="empty-state">
-                <div class="empty-state-icon">🏆</div>
+                <div class="empty-state-icon">Trophy</div>
                 <h3>No Scores Yet</h3>
                 <p>Be the first to complete a challenge and claim the top spot!</p>
             </div>
@@ -305,12 +305,12 @@
 
         <div class="action-buttons">
             {% if user %}
-                <a href="/challenge" class="btn btn-warning">🚀 Take Challenge</a>
+                <a href="/challenge" class="btn btn-warning">Take Challenge</a>
             {% else %}
                 <a href="/login" class="btn btn-warning">🔓 Login to Compete</a>
             {% endif %}
-            <a href="/topics" class="btn btn-primary">📚 Practice Mode</a>
-            <a href="/" class="btn btn-secondary">🏠 Home</a>
+            <a href="/topics" class="btn btn-primary">Practice Mode</a>
+            <a href="/" class="btn btn-secondary">Home</a>
         </div>
     </main>
 

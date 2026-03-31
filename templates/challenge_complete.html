@@ -239,7 +239,7 @@
 
     <main class="container">
         <div class="completion-header">
-            <h2 class="completion-title">🎉 Challenge Complete!</h2>
+            <h2 class="completion-title">Challenge Complete!</h2>
             <p class="completion-subtitle">Great job completing the timed challenge!</p>
             
             {% set minutes = (total_time // 60) | int %}
@@ -282,21 +282,21 @@
         <!-- Achievement Badges -->
         <div style="text-align: center; margin: 25px 0;">
             {% if accuracy >= 90 %}
-                <span class="achievement-badge">🎯 Accuracy Master</span>
+                <span class="achievement-badge">Accuracy Master</span>
             {% endif %}
             {% if total_time < 180 %}
-                <span class="achievement-badge">⚡ Speed Demon</span>
+                <span class="achievement-badge">Speed Demon</span>
             {% endif %}
             {% if correct_answers == total_questions %}
-                <span class="achievement-badge">🏆 Perfect Score</span>
+                <span class="achievement-badge">Perfect Score</span>
             {% endif %}
             {% if score >= 1000 %}
-                <span class="achievement-badge">🌟 High Scorer</span>
+                <span class="achievement-badge">High Scorer</span>
             {% endif %}
         </div>
 
         <div class="round-breakdown">
-            <h3>📊 Round-by-Round Breakdown</h3>
+            <h3>Round-by-Round Breakdown</h3>
             {% for round_score in round_scores %}
                 <div class="round-score">
                     <span class="round-number">Round {{ loop.index }}</span>
@@ -329,7 +329,7 @@
                     </div>
                     <div class="answer-result">
                         <div class="answer-status">
-                            {{ '✅' if answer.is_correct else ('⏰' if not answer.user_answer else '❌') }}
+                            {{ 'CORRECT' if answer.is_correct else ('TIMEOUT' if not answer.user_answer else 'WRONG') }}
                         </div>
                         <div class="answer-points">+{{ answer.points }}</div>
                         <div class="answer-points">{{ "%.1f"|format(answer.time_taken) }}s</div>
@@ -339,10 +339,10 @@
         </div>
 
         <div class="action-buttons">
-            <a href="/challenge" class="btn btn-success">🚀 Play Again</a>
-            <a href="/leaderboard" class="btn btn-warning">🏆 View Leaderboard</a>
-            <a href="/topics" class="btn btn-primary">📚 Practice Mode</a>
-            <a href="/" class="btn btn-secondary">🏠 Home</a>
+            <a href="/challenge" class="btn btn-success">Play Again</a>
+            <a href="/leaderboard" class="btn btn-warning">View Leaderboard</a>
+            <a href="/topics" class="btn btn-primary">Practice Mode</a>
+            <a href="/" class="btn btn-secondary">Home</a>
         </div>
     </main>
 </body>
