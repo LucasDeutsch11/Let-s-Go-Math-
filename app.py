@@ -29,9 +29,9 @@ CHALLENGE_CONFIG = {
     "questions_per_round": 3,
     "time_limit_seconds": 90,  # 1 minute 30 seconds per round
     "points": {
-        "correct_answer": 100,
-        "speed_bonus_max": 50,  # Max bonus points for speed
-        "round_multipliers": [1, 1.5, 2]  # Round 1, 2, 3 multipliers
+        "correct_answer": 11,   # 11 points base × 9 questions = 99 points
+        "speed_bonus_max": 1,   # Up to 1 bonus point per question (total max: 100)
+        "round_multipliers": [1, 1, 1]  # No multipliers - keep it simple and fair
     }
 }
 
