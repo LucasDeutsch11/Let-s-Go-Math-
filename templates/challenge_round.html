@@ -402,16 +402,18 @@ i <!DOCTYPE html>
                 return;
             }
             
+            // Create FormData BEFORE disabling the form
+            const formData = new FormData(answerForm);
+            console.log('FormData created, answer field:', formData.get('answer')); // DEBUG
+            
             console.log('Setting questionAnswered to true'); // DEBUG
             questionAnswered = true;
             clearInterval(timerInterval);
             
-            // Disable form
+            // Disable form AFTER creating FormData
             answerInput.disabled = true;
             submitBtn.disabled = true;
             
-            // Submit answer
-            const formData = new FormData(answerForm);
             console.log('Sending to server:', formData.get('answer')); // DEBUG
             
             fetch('/challenge/answer', {
