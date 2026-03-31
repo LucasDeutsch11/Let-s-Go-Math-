@@ -351,6 +351,8 @@ i <!DOCTYPE html>
         }
 
         function handleTimeout() {
+            if (questionAnswered) return; // Don't timeout if already answered
+            
             clearInterval(timerInterval);
             questionAnswered = true;
             
@@ -358,12 +360,7 @@ i <!DOCTYPE html>
             answerInput.disabled = true;
             submitBtn.disabled = true;
             
-            // Show timeout feedback
-            feedback.className = 'feedback timeout';
-            feedback.style.display = 'block';
-            feedback.innerHTML = '⏰ Time\'s up! The correct answer was: <strong>' + '{{ question.answer }}' + '</strong>';
-            
-            // Send timeout to server
+            // Send timeout to server (no feedback shown)
             fetch('/challenge/timeout', {
                 method: 'POST',
                 headers: {
@@ -387,7 +384,10 @@ i <!DOCTYPE html>
             if (questionAnswered) return;
             
             const userAnswer = answerInput.value.trim();
-            console.log('Submitting answer:', userAnswer); // Debug
+            if (!userAnswer) {
+                answerInput.focus();
+                return;
+            }
             
             questionAnswered = true;
             clearInterval(timerInterval);
@@ -398,7 +398,6 @@ i <!DOCTYPE html>
             
             // Submit answer
             const formData = new FormData(answerForm);
-            console.log('Form data:', formData.get('answer')); // Debug
             
             fetch('/challenge/answer', {
                 method: 'POST',
@@ -406,7 +405,6 @@ i <!DOCTYPE html>
             })
             .then(response => response.json())
             .then(data => {
-                console.log('Server response:', data); // Debug
                 // No feedback shown during challenge - save results for end
                 showNextButton();
             })
