@@ -496,7 +496,9 @@ def submit_challenge_answer():
     
     # Get submitted answer
     user_answer = request.form.get("answer", "").strip()
+    print(f"DEBUG: Received answer from user: '{user_answer}'")  # DEBUG
     time_taken = time.time() - challenge["round_start_time"]
+    print(f"DEBUG: Time taken: {time_taken}")  # DEBUG
     
     # Get current question
     round_questions = challenge["questions"][current_round - 1]
@@ -547,6 +549,7 @@ def submit_challenge_answer():
 @app.route("/challenge/timeout", methods=["POST"])
 def challenge_timeout():
     """Handle when timer runs out"""
+    print("DEBUG: Timeout route called!")  # DEBUG
     if "challenge" not in session or "user_id" not in session:
         return jsonify({"error": "No active challenge"}), 400
     

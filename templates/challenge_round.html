@@ -351,8 +351,13 @@ i <!DOCTYPE html>
         }
 
         function handleTimeout() {
-            if (questionAnswered) return; // Don't timeout if already answered
+            console.log('handleTimeout called, questionAnswered:', questionAnswered); // DEBUG
+            if (questionAnswered) {
+                console.log('Question already answered, not timing out'); // DEBUG
+                return; // Don't timeout if already answered
+            }
             
+            console.log('Processing timeout...'); // DEBUG
             clearInterval(timerInterval);
             questionAnswered = true;
             
@@ -369,10 +374,11 @@ i <!DOCTYPE html>
             })
             .then(response => response.json())
             .then(data => {
+                console.log('Timeout processed'); // DEBUG
                 showNextButton();
             })
             .catch(error => {
-                console.error('Error:', error);
+                console.error('Timeout error:', error);
                 showNextButton();
             });
         }
@@ -380,15 +386,23 @@ i <!DOCTYPE html>
         // Handle form submission
         answerForm.onsubmit = function(e) {
             e.preventDefault();
+            console.log('Form submitted!'); // DEBUG
             
-            if (questionAnswered) return;
+            if (questionAnswered) {
+                console.log('Question already answered, ignoring'); // DEBUG
+                return;
+            }
             
             const userAnswer = answerInput.value.trim();
+            console.log('User answer:', userAnswer); // DEBUG
+            
             if (!userAnswer) {
+                console.log('No answer provided'); // DEBUG
                 answerInput.focus();
                 return;
             }
             
+            console.log('Setting questionAnswered to true'); // DEBUG
             questionAnswered = true;
             clearInterval(timerInterval);
             
@@ -398,18 +412,23 @@ i <!DOCTYPE html>
             
             // Submit answer
             const formData = new FormData(answerForm);
+            console.log('Sending to server:', formData.get('answer')); // DEBUG
             
             fetch('/challenge/answer', {
                 method: 'POST',
                 body: formData
             })
-            .then(response => response.json())
+            .then(response => {
+                console.log('Response status:', response.status); // DEBUG
+                return response.json();
+            })
             .then(data => {
+                console.log('Server response:', data); // DEBUG
                 // No feedback shown during challenge - save results for end
                 showNextButton();
             })
             .catch(error => {
-                console.error('Error:', error);
+                console.error('Fetch error:', error);
                 
                 // Re-enable form on error
                 answerInput.disabled = false;
