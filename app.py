@@ -458,25 +458,49 @@ def next_problem():
 def topic_completed(topic_id):
     if topic_id not in MATH_TOPICS:
         return redirect(url_for("topics"))
-    
     topic = MATH_TOPICS[topic_id]
     user_info = None
-    correct_count = 0
-    incorrect_count = 0
-    # Retrieve answer history from session if available
+    difficulty = session.get("difficulty", "easy")
+    all_problems = topic["problems"]
+    easy_idx = int(len(all_problems) * 0.4)
+    med_idx = int(len(all_problems) * 0.7)
+    if difficulty == "easy":
+        filtered = all_problems[:easy_idx] if easy_idx > 0 else all_problems[:1]
+    elif difficulty == "medium":
+        filtered = all_problems[easy_idx:med_idx] if med_idx > easy_idx else all_problems[easy_idx:]
+    else:
+        filtered = all_problems[med_idx:] if med_idx < len(all_problems) else all_problems[-1:]
+    if not filtered:
+        filtered = all_problems
+    problems = filtered.copy()
+    if "problem_order" in session:
+        problems = [all_problems[i] for i in session["problem_order"]]
     answer_history = session.get("answer_history", {})
     topic_history = answer_history.get(topic_id, [])
+    filtered_indices = set([all_problems.index(p) for p in problems])
+    correct_count = 0
+    incorrect_count = 0
     for entry in topic_history:
-        if entry.get("correct"):
-            correct_count += 1
-        else:
-            incorrect_count += 1
+        if entry.get("problem") in filtered_indices:
+            if entry.get("correct"):
+                correct_count += 1
+            else:
+                incorrect_count += 1
     if "user_id" in session:
         user_info = {
             "email": session.get("user_email"),
             "name": session.get("user_name", "User")
         }
-    return render_template("topic_completed.html", user=user_info, topic=topic, topic_id=topic_id, correct_count=correct_count, incorrect_count=incorrect_count)
+    return render_template(
+        "completed_screen.html",
+        user=user_info,
+        topic=topic,
+        topic_id=topic_id,
+        correct_count=correct_count,
+        incorrect_count=incorrect_count,
+        difficulty=difficulty,
+        total_problems=len(problems)
+    )
 
 @app.route("/health")
 def health_check():
