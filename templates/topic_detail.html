@@ -185,8 +185,17 @@
         {% endif %}
 
         <div class="action-buttons">
+            <div style="margin-bottom: 15px;">
+                <label for="difficulty" style="font-weight: bold; margin-right: 8px;">Difficulty:</label>
+                <select name="difficulty" id="difficulty" style="padding: 6px 10px; border-radius: 6px; border: 1px solid #cfd7f1; font-size: 15px;">
+                    <option value="easy">Easy (5 problems)</option>
+                    <option value="medium">Medium (5 problems)</option>
+                    <option value="hard">Hard (5 problems)</option>
+                </select>
+            </div>
             {% if user and progress.completed > 0 %}
                 <form action="/start/{{ topic_id }}" method="GET" style="display: inline;">
+                    <input type="hidden" name="difficulty" id="diff-continue" value="easy">
                     <button type="submit" class="continue-btn">Continue Practice</button>
                 </form>
                 <form action="/restart/{{ topic_id }}" method="POST" style="display: inline;">
@@ -194,6 +203,7 @@
                 </form>
             {% else %}
                 <form action="/start/{{ topic_id }}" method="GET" style="display: inline;">
+                    <input type="hidden" name="difficulty" id="diff-start" value="easy">
                     <button type="submit" class="start-btn">Start Practice</button>
                 </form>
             {% endif %}
@@ -215,6 +225,15 @@
             if (progressFill) {
                 const progressValue = progressFill.getAttribute('data-progress');
                 progressFill.style.width = progressValue + '%';
+            }
+            // Sync difficulty dropdown with hidden form inputs
+            const diffSelect = document.getElementById('difficulty');
+            if (diffSelect) {
+                diffSelect.addEventListener('change', function() {
+                    const val = this.value;
+                    const fields = document.querySelectorAll('#diff-continue, #diff-start');
+                    fields.forEach(f => f.value = val);
+                });
             }
         });
     </script>

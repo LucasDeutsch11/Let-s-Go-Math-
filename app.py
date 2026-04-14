@@ -40,88 +40,192 @@ MATH_TOPICS = {
         "title": "Linear Equations",
         "description": "Solve simple linear equations with one variable",
         "problems": [
+            # --- Easy (first 5) ---
             {"instruction": "Solve for", "variable": "x", "equation": "x + 5 = 7", "answer": 2},
             {"instruction": "Solve for", "variable": "x", "equation": "x + 9 = 15", "answer": 6},
-            {"instruction": "Solve for", "variable": "x", "equation": "x - 4 = 10", "answer": 14},
+            {"instruction": "Solve for", "variable": "x", "equation": "x - 3 = 4", "answer": 7},
+            {"instruction": "Solve for", "variable": "x", "equation": "x + 12 = 20", "answer": 8},
+            {"instruction": "Solve for", "variable": "x", "equation": "x - 8 = 2", "answer": 10},
+            # --- Medium (next 5) ---
             {"instruction": "Solve for", "variable": "x", "equation": "2x = 12", "answer": 6},
+            {"instruction": "Solve for", "variable": "x", "equation": "3x = 21", "answer": 7},
+            {"instruction": "Solve for", "variable": "x", "equation": "x - 4 = 10", "answer": 14},
+            {"instruction": "Solve for", "variable": "x", "equation": "2x + 4 = 14", "answer": 5},
+            {"instruction": "Solve for", "variable": "x", "equation": "5x = 35", "answer": 7},
+            # --- Hard (last 5) ---
             {"instruction": "Solve for", "variable": "x", "equation": "3x + 1 = 10", "answer": 3},
+            {"instruction": "Solve for", "variable": "x", "equation": "4x - 7 = 13", "answer": 5},
+            {"instruction": "Solve for", "variable": "x", "equation": "2x + 9 = 25", "answer": 8},
+            {"instruction": "Solve for", "variable": "x", "equation": "7x - 3 = 18", "answer": 3},
+            {"instruction": "Solve for", "variable": "x", "equation": "5x + 2 = 27", "answer": 5},
         ]
     },
     "inequalities": {
         "title": "Inequalities",
         "description": "Solve and graph linear inequalities",
         "problems": [
+            # --- Easy ---
             {"instruction": "Solve for", "variable": "x", "equation": "x + 3 > 8", "answer": "x > 5"},
+            {"instruction": "Solve for", "variable": "x", "equation": "x - 2 < 6", "answer": "x < 8"},
+            {"instruction": "Solve for", "variable": "x", "equation": "x + 1 > 4", "answer": "x > 3"},
+            {"instruction": "Solve for", "variable": "x", "equation": "x - 5 < 10", "answer": "x < 15"},
+            {"instruction": "Solve for", "variable": "x", "equation": "x + 7 > 12", "answer": "x > 5"},
+            # --- Medium ---
             {"instruction": "Solve for", "variable": "x", "equation": "2x ≤ 10", "answer": "x ≤ 5"},
-            {"instruction": "Solve for", "variable": "x", "equation": "x - 7 < 2", "answer": "x < 9"},
             {"instruction": "Solve for", "variable": "x", "equation": "3x ≥ 15", "answer": "x ≥ 5"},
+            {"instruction": "Solve for", "variable": "x", "equation": "4x < 20", "answer": "x < 5"},
+            {"instruction": "Solve for", "variable": "x", "equation": "2x > 14", "answer": "x > 7"},
+            {"instruction": "Solve for", "variable": "x", "equation": "5x ≤ 25", "answer": "x ≤ 5"},
+            # --- Hard ---
+            {"instruction": "Solve for", "variable": "x", "equation": "x - 7 < 2", "answer": "x < 9"},
             {"instruction": "Solve for", "variable": "x", "equation": "x/2 > 4", "answer": "x > 8"},
+            {"instruction": "Solve for", "variable": "x", "equation": "3x + 1 > 10", "answer": "x > 3"},
+            {"instruction": "Solve for", "variable": "x", "equation": "2x - 5 ≤ 9", "answer": "x ≤ 7"},
+            {"instruction": "Solve for", "variable": "x", "equation": "4x + 3 ≥ 19", "answer": "x ≥ 4"},
         ]
     },
     "systems": {
         "title": "Systems of Equations",
         "description": "Solve systems of linear equations - answer in (x,y) format",
         "problems": [
+            # --- Easy ---
             {"instruction": "Solve for x and y", "variable": "(x,y)", "equation": "x + y = 7, x - y = 1", "answer": "(4,3)"},
+            {"instruction": "Solve for x and y", "variable": "(x,y)", "equation": "x + y = 10, x = 6", "answer": "(6,4)"},
+            {"instruction": "Solve for x and y", "variable": "(x,y)", "equation": "x + y = 5, y = 2", "answer": "(3,2)"},
+            {"instruction": "Solve for x and y", "variable": "(x,y)", "equation": "x + y = 8, x = 3", "answer": "(3,5)"},
+            {"instruction": "Solve for x and y", "variable": "(x,y)", "equation": "x + y = 9, x - y = 3", "answer": "(6,3)"},
+            # --- Medium ---
             {"instruction": "Solve for x and y", "variable": "(x,y)", "equation": "2x + y = 10, x - y = 2", "answer": "(4,2)"},
             {"instruction": "Solve for x and y", "variable": "(x,y)", "equation": "x + 2y = 8, x = 2", "answer": "(2,3)"},
             {"instruction": "Solve for x and y", "variable": "(x,y)", "equation": "3x + y = 11, y = 2", "answer": "(3,2)"},
             {"instruction": "Solve for x and y", "variable": "(x,y)", "equation": "x + y = 5, 2x - y = 1", "answer": "(2,3)"},
+            {"instruction": "Solve for x and y", "variable": "(x,y)", "equation": "2x + y = 7, x = 1", "answer": "(1,5)"},
+            # --- Hard ---
+            {"instruction": "Solve for x and y", "variable": "(x,y)", "equation": "3x + 2y = 12, x - y = 1", "answer": "(2,3)"},
+            {"instruction": "Solve for x and y", "variable": "(x,y)", "equation": "2x + 3y = 13, x + y = 5", "answer": "(2,3)"},
+            {"instruction": "Solve for x and y", "variable": "(x,y)", "equation": "4x - y = 7, 2x + y = 11", "answer": "(3,5)"},
+            {"instruction": "Solve for x and y", "variable": "(x,y)", "equation": "x + 3y = 10, 2x - y = 6", "answer": "(4,2)"},
+            {"instruction": "Solve for x and y", "variable": "(x,y)", "equation": "3x - y = 5, x + 2y = 11", "answer": "(3,4)"},
         ]
     },
     "exponents": {
         "title": "Exponents",
         "description": "Work with exponential expressions and rules",
         "problems": [
+            # --- Easy ---
             {"instruction": "Simplify", "variable": "", "equation": "2³", "answer": 8},
             {"instruction": "Simplify", "variable": "", "equation": "5²", "answer": 25},
-            {"instruction": "Solve for", "variable": "x", "equation": "x² = 16", "answer": "-4,4"},
+            {"instruction": "Simplify", "variable": "", "equation": "4²", "answer": 16},
+            {"instruction": "Simplify", "variable": "", "equation": "3²", "answer": 9},
+            {"instruction": "Simplify", "variable": "", "equation": "6²", "answer": 36},
+            # --- Medium ---
             {"instruction": "Simplify", "variable": "", "equation": "3⁴", "answer": 81},
+            {"instruction": "Simplify", "variable": "", "equation": "2⁵", "answer": 32},
+            {"instruction": "Simplify", "variable": "", "equation": "10³", "answer": 1000},
             {"instruction": "Solve for", "variable": "x", "equation": "2ˣ = 8", "answer": 3},
+            {"instruction": "Solve for", "variable": "x", "equation": "3ˣ = 27", "answer": 3},
+            # --- Hard ---
+            {"instruction": "Solve for", "variable": "x", "equation": "x² = 16", "answer": "-4,4"},
+            {"instruction": "Solve for", "variable": "x", "equation": "x² = 25", "answer": "-5,5"},
+            {"instruction": "Simplify", "variable": "", "equation": "2⁶", "answer": 64},
+            {"instruction": "Solve for", "variable": "x", "equation": "x³ = 27", "answer": 3},
+            {"instruction": "Solve for", "variable": "x", "equation": "2ˣ = 32", "answer": 5},
         ]
     },
     "polynomials": {
         "title": "Polynomials",
         "description": "Add, subtract, and multiply polynomials",
         "problems": [
+            # --- Easy ---
             {"instruction": "Simplify", "variable": "", "equation": "(x + 3) + (2x + 1)", "answer": "3x + 4"},
             {"instruction": "Expand", "variable": "", "equation": "2(x + 5)", "answer": "2x + 10"},
+            {"instruction": "Simplify", "variable": "", "equation": "(x + 4) + (x + 6)", "answer": "2x + 10"},
+            {"instruction": "Expand", "variable": "", "equation": "3(x + 2)", "answer": "3x + 6"},
+            {"instruction": "Simplify", "variable": "", "equation": "(2x + 1) + (x + 3)", "answer": "3x + 4"},
+            # --- Medium ---
             {"instruction": "Simplify", "variable": "", "equation": "(3x + 2) - (x + 1)", "answer": "2x + 1"},
             {"instruction": "Expand", "variable": "", "equation": "3(2x - 4)", "answer": "6x - 12"},
+            {"instruction": "Simplify", "variable": "", "equation": "(5x + 3) - (2x + 1)", "answer": "3x + 2"},
+            {"instruction": "Expand", "variable": "", "equation": "4(x - 3)", "answer": "4x - 12"},
+            {"instruction": "Simplify", "variable": "", "equation": "(4x + 5) - (x + 2)", "answer": "3x + 3"},
+            # --- Hard ---
             {"instruction": "Simplify", "variable": "", "equation": "2x² + 3x² - x²", "answer": "4x²"},
+            {"instruction": "Expand", "variable": "", "equation": "x(x + 3)", "answer": "x² + 3x"},
+            {"instruction": "Expand", "variable": "", "equation": "2x(x - 1)", "answer": "2x² - 2x"},
+            {"instruction": "Simplify", "variable": "", "equation": "5x² - 2x² + x²", "answer": "4x²"},
+            {"instruction": "Expand", "variable": "", "equation": "x(2x + 5)", "answer": "2x² + 5x"},
         ]
     },
     "factoring": {
         "title": "Factoring",
         "description": "Factor quadratic expressions and polynomials",
         "problems": [
+            # --- Easy ---
+            {"instruction": "Factor", "variable": "", "equation": "2x + 6", "answer": "2(x+3)"},
+            {"instruction": "Factor", "variable": "", "equation": "3x + 9", "answer": "3(x+3)"},
+            {"instruction": "Factor", "variable": "", "equation": "5x + 10", "answer": "5(x+2)"},
+            {"instruction": "Factor", "variable": "", "equation": "4x + 8", "answer": "4(x+2)"},
+            {"instruction": "Factor", "variable": "", "equation": "6x + 12", "answer": "6(x+2)"},
+            # --- Medium ---
+            {"instruction": "Factor", "variable": "", "equation": "x² - 9", "answer": "(x+3)(x-3)"},
+            {"instruction": "Factor", "variable": "", "equation": "x² - 16", "answer": "(x+4)(x-4)"},
+            {"instruction": "Factor", "variable": "", "equation": "x² - 25", "answer": "(x+5)(x-5)"},
+            {"instruction": "Factor", "variable": "", "equation": "x² + 6x + 9", "answer": "(x+3)²"},
+            {"instruction": "Factor", "variable": "", "equation": "x² - 4", "answer": "(x+2)(x-2)"},
+            # --- Hard ---
             {"instruction": "Factor", "variable": "", "equation": "x² - 5x + 6", "answer": "(x-2)(x-3)"},
             {"instruction": "Factor", "variable": "", "equation": "x² + 7x + 12", "answer": "(x+3)(x+4)"},
-            {"instruction": "Factor", "variable": "", "equation": "2x + 6", "answer": "2(x+3)"},
-            {"instruction": "Factor", "variable": "", "equation": "x² - 9", "answer": "(x+3)(x-3)"},
-            {"instruction": "Factor", "variable": "", "equation": "x² + 6x + 9", "answer": "(x+3)²"},
+            {"instruction": "Factor", "variable": "", "equation": "x² + 5x + 6", "answer": "(x+2)(x+3)"},
+            {"instruction": "Factor", "variable": "", "equation": "x² - 7x + 10", "answer": "(x-2)(x-5)"},
+            {"instruction": "Factor", "variable": "", "equation": "x² + 8x + 15", "answer": "(x+3)(x+5)"},
         ]
     },
     "quadratics": {
         "title": "Quadratic Equations",
         "description": "Solve quadratic equations - list all solutions separated by commas",
         "problems": [
+            # --- Easy ---
+            {"instruction": "Solve for", "variable": "x", "equation": "x² = 4", "answer": "-2,2"},
+            {"instruction": "Solve for", "variable": "x", "equation": "x² = 9", "answer": "-3,3"},
+            {"instruction": "Solve for", "variable": "x", "equation": "x² = 25", "answer": "-5,5"},
+            {"instruction": "Solve for", "variable": "x", "equation": "x² = 1", "answer": "-1,1"},
+            {"instruction": "Solve for", "variable": "x", "equation": "x² = 36", "answer": "-6,6"},
+            # --- Medium ---
             {"instruction": "Solve for", "variable": "x", "equation": "x² - 4 = 0", "answer": "-2,2"},
             {"instruction": "Solve for", "variable": "x", "equation": "x² + 2x - 3 = 0", "answer": "-3,1"},
+            {"instruction": "Solve for", "variable": "x", "equation": "x² - x - 6 = 0", "answer": "-2,3"},
+            {"instruction": "Solve for", "variable": "x", "equation": "x² + 3x - 10 = 0", "answer": "-5,2"},
+            {"instruction": "Solve for", "variable": "x", "equation": "x² - 5x + 6 = 0", "answer": "2,3"},
+            # --- Hard ---
             {"instruction": "Solve for", "variable": "x", "equation": "(x - 1)² = 4", "answer": "-1,3"},
             {"instruction": "Solve for", "variable": "x", "equation": "x² - 6x + 8 = 0", "answer": "2,4"},
             {"instruction": "Solve for", "variable": "x", "equation": "2x² - 8 = 0", "answer": "-2,2"},
+            {"instruction": "Solve for", "variable": "x", "equation": "x² - 8x + 15 = 0", "answer": "3,5"},
+            {"instruction": "Solve for", "variable": "x", "equation": "x² + x - 12 = 0", "answer": "-4,3"},
         ]
     },
     "word_problems": {
         "title": "Word Problems",
         "description": "Apply algebra to real-world situations",
         "problems": [
-            {"instruction": "Solve for", "variable": "x", "equation": "A number plus 7 equals 15." , "answer": 8},
-            {"instruction": "Solve for", "variable": "x", "equation": "Twice a number is 18." , "answer": 9},
-            {"instruction": "Solve for", "variable": "x", "equation": "A number minus 5 equals 12." , "answer": 17},
-            {"instruction": "Solve for", "variable": "x", "equation": "Three times a number plus 4 equals 19." , "answer": 5},
-            {"instruction": "Solve for", "variable": "x", "equation": "Half of a number is 6." , "answer": 12},
+            # --- Easy ---
+            {"instruction": "Solve for", "variable": "x", "equation": "A number plus 7 equals 15.", "answer": 8},
+            {"instruction": "Solve for", "variable": "x", "equation": "Twice a number is 18.", "answer": 9},
+            {"instruction": "Solve for", "variable": "x", "equation": "A number plus 3 equals 10.", "answer": 7},
+            {"instruction": "Solve for", "variable": "x", "equation": "A number minus 2 equals 6.", "answer": 8},
+            {"instruction": "Solve for", "variable": "x", "equation": "A number plus 11 equals 20.", "answer": 9},
+            # --- Medium ---
+            {"instruction": "Solve for", "variable": "x", "equation": "A number minus 5 equals 12.", "answer": 17},
+            {"instruction": "Solve for", "variable": "x", "equation": "Three times a number plus 4 equals 19.", "answer": 5},
+            {"instruction": "Solve for", "variable": "x", "equation": "Half of a number is 6.", "answer": 12},
+            {"instruction": "Solve for", "variable": "x", "equation": "Four times a number equals 28.", "answer": 7},
+            {"instruction": "Solve for", "variable": "x", "equation": "Double a number minus 3 equals 11.", "answer": 7},
+            # --- Hard ---
+            {"instruction": "Solve for", "variable": "x", "equation": "Three times a number minus 7 equals 14.", "answer": 7},
+            {"instruction": "Solve for", "variable": "x", "equation": "A number divided by 3 equals 5.", "answer": 15},
+            {"instruction": "Solve for", "variable": "x", "equation": "Five times a number plus 3 equals 28.", "answer": 5},
+            {"instruction": "Solve for", "variable": "x", "equation": "Twice a number plus 9 equals 25.", "answer": 8},
+            {"instruction": "Solve for", "variable": "x", "equation": "Four times a number minus 1 equals 19.", "answer": 5},
         ]
     }
 }
@@ -450,14 +554,16 @@ def next_problem():
     difficulty = session.get("difficulty", "easy")
     topic = MATH_TOPICS[topic_id]
     all_problems = topic["problems"]
-    easy_idx = int(len(all_problems) * 0.4)
-    med_idx = int(len(all_problems) * 0.7)
+    n = len(all_problems)
+    third = max(1, (n + 2) // 3)
+    easy_end = third
+    medium_end = min(third * 2, n)
     if difficulty == "easy":
-        filtered = all_problems[:easy_idx] if easy_idx > 0 else all_problems[:1]
+        filtered = all_problems[:easy_end]
     elif difficulty == "medium":
-        filtered = all_problems[easy_idx:med_idx] if med_idx > easy_idx else all_problems[easy_idx:]
+        filtered = all_problems[easy_end:medium_end]
     else:
-        filtered = all_problems[med_idx:] if med_idx < len(all_problems) else all_problems[-1:]
+        filtered = all_problems[medium_end:]
     if not filtered:
         filtered = all_problems
     problems = filtered.copy()
