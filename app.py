@@ -229,25 +229,25 @@ def session_login():
 def dashboard():
     if "user_id" not in session:
         return redirect(url_for("login"))
-        # Gather progress from Firestore if logged in, else session
-        progress = {}
-        session_progress = session.get("progress", {})
-        if firebase_available and "user_id" in session:
-            try:
-                doc = db.collection("user_progress").document(session["user_id"]).get()
-                if doc.exists:
-                    firestore_progress = doc.to_dict().get("progress", {})
-                    session_progress = firestore_progress
-            except Exception as e:
-                print(f"Error loading progress from Firestore: {e}")
-        for topic_id, data in session_progress.items():
-            topic_info = MATH_TOPICS.get(topic_id, {"title": topic_id})
-            progress[topic_id] = {
-                "title": topic_info["title"],
-                "completed": data.get("completed", 0),
-                "total": data.get("total", len(topic_info.get("problems", [])))
-            }
-        return render_template("dashboard.html", progress=progress)
+    # Gather progress from Firestore if logged in, else session
+    progress = {}
+    session_progress = session.get("progress", {})
+    if firebase_available and "user_id" in session:
+        try:
+            doc = db.collection("user_progress").document(session["user_id"]).get()
+            if doc.exists:
+                firestore_progress = doc.to_dict().get("progress", {})
+                session_progress = firestore_progress
+        except Exception as e:
+            print(f"Error loading progress from Firestore: {e}")
+    for topic_id, data in session_progress.items():
+        topic_info = MATH_TOPICS.get(topic_id, {"title": topic_id})
+        progress[topic_id] = {
+            "title": topic_info["title"],
+            "completed": data.get("completed", 0),
+            "total": data.get("total", len(topic_info.get("problems", [])))
+        }
+    return render_template("dashboard.html", progress=progress)
 
 @app.route("/logout")
 def logout():
@@ -448,14 +448,22 @@ def topic_completed(topic_id):
     
     topic = MATH_TOPICS[topic_id]
     user_info = None
-    
+    correct_count = 0
+    incorrect_count = 0
+    # Retrieve answer history from session if available
+    answer_history = session.get("answer_history", {})
+    topic_history = answer_history.get(topic_id, [])
+    for entry in topic_history:
+        if entry.get("correct"):
+            correct_count += 1
+        else:
+            incorrect_count += 1
     if "user_id" in session:
         user_info = {
             "email": session.get("user_email"),
             "name": session.get("user_name", "User")
         }
-    
-    return render_template("completed_screen.html", user=user_info, topic=topic, topic_id=topic_id)
+    return render_template("topic_completed.html", user=user_info, topic=topic, topic_id=topic_id, correct_count=correct_count, incorrect_count=incorrect_count)
 
 @app.route("/health")
 def health_check():
@@ -467,75 +475,62 @@ def health_check():
 @app.route("/challenge")
 def challenge_mode():
     """Challenge mode selection screen"""
-    user_info = None
-    if "user_id" in session:
-        user_info = {
-            "email": session.get("user_email"),
-            "name": session.get("user_name", "User")
-        }
-    return render_template("challenge_mode.html", user=user_info, config=CHALLENGE_CONFIG)
-
-@app.route("/challenge/start", methods=["POST"])
-def start_challenge():
-    """Start a new challenge game"""
-    if "user_id" not in session:
-        return redirect(url_for("login"))
-    
-    # Initialize challenge session
-    challenge_questions = generate_challenge_questions()
-    session["challenge"] = {
-        "questions": challenge_questions,
-        "current_round": 1,
-        "current_question": 0,
-        "score": 0,
-        "start_time": time.time(),
-        "round_start_time": time.time(),
-        "answers": [],
-        "round_scores": []
-    }
-    
-    return redirect(url_for("challenge_round"))
-
-@app.route("/challenge/round")
-def challenge_round():
-    """Display current challenge question with timer"""
-    if "challenge" not in session or "user_id" not in session:
-        return redirect(url_for("challenge_mode"))
-    
-    challenge = session["challenge"]
-    current_round = challenge["current_round"]
-    current_question = challenge["current_question"]
-    
-    # Check if challenge is completed
-    if current_round > CHALLENGE_CONFIG["rounds"]:
-        return redirect(url_for("challenge_complete"))
-    
-    # Get current question
-    round_questions = challenge["questions"][current_round - 1]
-    if current_question >= len(round_questions):
-        # Move to next round
-        challenge["current_round"] += 1
-        challenge["current_question"] = 0
-        challenge["round_start_time"] = time.time()
-        session["challenge"] = challenge
+    if request.method == "POST":
+        user_answer = request.form.get("answer", "").strip()
+        if user_answer == "":
+            feedback = "Please enter an answer."
+        else:
+            try:
+                # Handle different answer types
+                if isinstance(problem["answer"], str):
+                    user_answer_clean = user_answer.replace(" ", "")
+                    correct_answer_clean = str(problem["answer"]).replace(" ", "")
+                    if "," in correct_answer_clean and "," in user_answer_clean:
+                        user_values = set(user_answer_clean.split(","))
+                        correct_values = set(correct_answer_clean.split(","))
+                        is_correct = user_values == correct_values
+                    elif "(" in correct_answer_clean and ")" in correct_answer_clean and "(" in user_answer_clean and ")" in user_answer_clean:
+                        import re
+                        correct_factors = re.findall(r'\([^)]+\)', correct_answer_clean)
+                        user_factors = re.findall(r'\([^)]+\)', user_answer_clean)
+                        correct_factors_set = set(correct_factors)
+                        user_factors_set = set(user_factors)
+                        is_correct = correct_factors_set == user_factors_set
+                    else:
+                        is_correct = user_answer_clean.lower() == correct_answer_clean.lower()
+                    if is_correct:
+                        feedback = "Correct!"
+                        if "user_id" in session:
+                            try:
+                                update_user_progress(topic_id, idx)
+                            except Exception as e:
+                                print(f"Progress update error: {e}")
+                    else:
+                        feedback = "Incorrect!"
+                else:
+                    try:
+                        user_num = int(user_answer)
+                        if user_num == problem["answer"]:
+                            feedback = "Correct!"
+                            if "user_id" in session:
+                                try:
+                                    update_user_progress(topic_id, idx)
+                                except Exception as e:
+                                    print(f"Progress update error: {e}")
+                        else:
+                            feedback = "Incorrect!"
+                    except ValueError:
+                        feedback = "Please enter a valid number."
+            except Exception as e:
+                print(f"Answer checking error: {e}")
+                feedback = "An error occurred. Please try again."
+        # --- Track answer history for round feedback ---
+        answer_history = session.get("answer_history", {})
+        topic_history = answer_history.get(topic_id, [])
+        topic_history.append({"problem": idx, "correct": feedback == "Correct!", "user_answer": user_answer})
+        answer_history[topic_id] = topic_history
+        session["answer_history"] = answer_history
         session.modified = True
-        return redirect(url_for("challenge_round"))
-    
-    question = round_questions[current_question]
-    
-    user_info = {
-        "email": session.get("user_email"),
-        "name": session.get("user_name", "User")
-    }
-    
-    return render_template("challenge_round.html", 
-                         user=user_info,
-                         question=question,
-                         round_number=current_round,
-                         question_number=current_question + 1,
-                         total_questions=len(round_questions),
-                         time_limit=CHALLENGE_CONFIG["time_limit_seconds"],
-                         config=CHALLENGE_CONFIG)
 
 @app.route("/challenge/answer", methods=["POST"])
 def submit_challenge_answer():

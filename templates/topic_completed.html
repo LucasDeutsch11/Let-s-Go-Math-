@@ -157,17 +157,18 @@
     
     <main class="container">
         <div class="completion-box">
-            <div class="celebration-emoji">Celebration!</div>
+            <div class="celebration-emoji">🎉</div>
             <div class="completion-title">Congratulations!</div>
             <div class="topic-title">{{ topic.title }}</div>
             <div class="completion-message">
-                You've successfully completed all {{ topic.problems|length }} problems in this topic!<br>
+                You've completed all {{ topic.problems|length }} problems in this topic!<br>
                 Great work mastering {{ topic.title.lower() }}!
             </div>
-            
             <div class="stats">
-                <h3>Topic Complete</h3>
-                <p><strong>Problems Solved:</strong> {{ topic.problems|length }} out of {{ topic.problems|length }}</p>
+                <h3>Round Feedback</h3>
+                <p><strong>Correct Answers:</strong> {{ correct_count }}</p>
+                <p><strong>Incorrect Answers:</strong> {{ incorrect_count }}</p>
+                <p><strong>Total Problems:</strong> {{ topic.problems|length }}</p>
                 <p><strong>Topic:</strong> {{ topic.description }}</p>
                 {% if user %}
                 <p><em>Your progress has been saved to your account!</em></p>
