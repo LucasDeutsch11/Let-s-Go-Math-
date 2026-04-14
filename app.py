@@ -298,8 +298,7 @@ def practice():
     # If not enough, fallback to all
     if not filtered:
         filtered = all_problems
-    # Shuffle for variety
-    random.seed(session.get("user_id", time.time()))
+    # Shuffle for variety (no seed, always new order)
     problems = filtered.copy()
     random.shuffle(problems)
     # Save the randomized order in session for consistency
@@ -475,14 +474,22 @@ def topic_completed(topic_id):
     user_info = None
     difficulty = session.get("difficulty", "easy")
     all_problems = topic["problems"]
-    easy_idx = int(len(all_problems) * 0.4)
-    med_idx = int(len(all_problems) * 0.7)
-    if difficulty == "easy":
-        filtered = all_problems[:easy_idx] if easy_idx > 0 else all_problems[:1]
-    elif difficulty == "medium":
-        filtered = all_problems[easy_idx:med_idx] if med_idx > easy_idx else all_problems[easy_idx:]
+    n = len(all_problems)
+    if n >= 3:
+        easy_indices = range(0, n//3)
+        medium_indices = range(n//3, 2*n//3)
+        hard_indices = range(2*n//3, n)
     else:
-        filtered = all_problems[med_idx:] if med_idx < len(all_problems) else all_problems[-1:]
+        easy_indices = [0]
+        medium_indices = [1] if n > 1 else [0]
+        hard_indices = [2] if n > 2 else [n-1]
+
+    if difficulty == "easy":
+        filtered = [all_problems[i] for i in easy_indices]
+    elif difficulty == "medium":
+        filtered = [all_problems[i] for i in medium_indices]
+    else:
+        filtered = [all_problems[i] for i in hard_indices]
     if not filtered:
         filtered = all_problems
     problems = filtered.copy()
@@ -491,10 +498,12 @@ def topic_completed(topic_id):
     answer_history = session.get("answer_history", {})
     topic_history = answer_history.get(topic_id, [])
     filtered_indices = set([all_problems.index(p) for p in problems])
+    # Only count answers for problems in this session's order
+    valid_indices = set(session["problem_order"]) if "problem_order" in session else filtered_indices
     correct_count = 0
     incorrect_count = 0
     for entry in topic_history:
-        if entry.get("problem") in filtered_indices:
+        if entry.get("problem") in valid_indices:
             if entry.get("correct"):
                 correct_count += 1
             else:
