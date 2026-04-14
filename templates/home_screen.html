@@ -108,8 +108,14 @@
                     <button type="submit" style="background: #28a745; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 16px;">Browse All Topics</button>
                 </form>
                 <form action="/start" method="GET" style="display: inline;">
-                    <button type="submit">Quick Start (Linear Equations)</button>
-                </form>
+                        <label for="difficulty" style="margin-right: 8px; font-weight: bold;">Difficulty:</label>
+                        <select name="difficulty" id="difficulty" style="padding: 6px 10px; border-radius: 6px; border: 1px solid #cfd7f1; font-size: 15px; margin-right: 8px;">
+                            <option value="easy">Easy</option>
+                            <option value="medium">Medium</option>
+                            <option value="hard">Hard</option>
+                        </select>
+                        <button type="submit">Quick Start (Linear Equations)</button>
+                    </form>
             </div>
             
             <!-- Challenge Mode -->

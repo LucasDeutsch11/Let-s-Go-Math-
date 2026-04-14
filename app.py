@@ -235,26 +235,27 @@ def dashboard():
 def logout():
     session.clear()
     return redirect(url_for("home"))
-@app.route("/start")
-@app.route("/start/<topic_id>")
+@app.route("/start", methods=["GET"])
+@app.route("/start/<topic_id>", methods=["GET"])
 def start(topic_id=None):
+    # Get difficulty from query string (default: easy)
+    difficulty = request.args.get("difficulty", "easy")
     if topic_id and topic_id not in MATH_TOPICS:
         return redirect(url_for("topics"))
-    
     # Default to linear equations if no topic specified
     if not topic_id:
         topic_id = "linear_equations"
-    
     session["current_topic"] = topic_id
     session["problem_index"] = 0
+    session["difficulty"] = difficulty
     return redirect(url_for("practice"))
 
 @app.route("/practice", methods=["GET", "POST"])
 def practice():
     topic_id = session.get("current_topic", "linear_equations")
+    difficulty = session.get("difficulty", "easy")
     if topic_id not in MATH_TOPICS:
         return redirect(url_for("topics"))
-    
     topic = MATH_TOPICS[topic_id]
     problems = topic["problems"]
     

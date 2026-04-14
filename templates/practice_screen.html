@@ -113,6 +113,9 @@
     </header>
     <main class="container">
         <h2>Practice Problem</h2>
+        <div style="margin-bottom: 10px; font-size: 16px; color: #1f4bb8;">
+            Difficulty: <strong>{{ difficulty|capitalize }}</strong>
+        </div>
         <form action="/" method="GET">
             <button type="submit">&larr; Back to Home</button>
         </form>
@@ -134,13 +137,13 @@
                 />
                 <button type="submit">Submit</button>
             </form>
-            {% if feedback %}
-                {% if feedback == "Correct!" %}
-                   <div class="feedback ok">{{ feedback }}</div>
-                {% else %}
-                   <div class="feedback bad">{{ feedback }}</div>
+                {% if feedback %}
+                     {% if feedback == "Correct!" %}
+                         <div class="feedback ok">{{ feedback }}</div>
+                     {% else %}
+                         <div class="feedback bad">{{ feedback }}</div>
+                     {% endif %}
                 {% endif %}
-            {% endif %}
             {% if feedback == "Correct!" %}
             <form action="/next" method="POST">
                 {% if problem_number < total_problems %}
