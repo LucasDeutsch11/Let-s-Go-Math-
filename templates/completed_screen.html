@@ -167,7 +167,7 @@
         </div>
         
         <div class="action-buttons">
-            <form action="/restart" method="POST" style="display: inline;">
+            <form action="/start/{{ topic_id }}?difficulty={{ difficulty }}" method="GET" style="display: inline;">
                 <button type="submit" class="restart-btn">Practice Again</button>
             </form>
             <form action="/" method="GET" style="display: inline;">

@@ -288,22 +288,16 @@ def practice():
     all_problems = topic["problems"]
     # Assign difficulty to problems by index (non-overlapping, always different)
     n = len(all_problems)
-    # For small sets, split as evenly as possible
-    if n >= 3:
-        easy_indices = range(0, n//3)
-        medium_indices = range(n//3, 2*n//3)
-        hard_indices = range(2*n//3, n)
-    else:
-        easy_indices = [0]
-        medium_indices = [1] if n > 1 else [0]
-        hard_indices = [2] if n > 2 else [n-1]
-
+    # Split into 3 roughly equal groups: easy gets first third, medium middle, hard last
+    third = max(1, (n + 2) // 3)  # ceiling division so each group gets at least 1
+    easy_end = third
+    medium_end = min(third * 2, n)
     if difficulty == "easy":
-        filtered = [all_problems[i] for i in easy_indices]
+        filtered = all_problems[:easy_end]
     elif difficulty == "medium":
-        filtered = [all_problems[i] for i in medium_indices]
+        filtered = all_problems[easy_end:medium_end]
     else:
-        filtered = [all_problems[i] for i in hard_indices]
+        filtered = all_problems[medium_end:]
     # If not enough, fallback to all
     if not filtered:
         filtered = all_problems
@@ -486,21 +480,15 @@ def topic_completed(topic_id):
     difficulty = session.get("difficulty", "easy")
     all_problems = topic["problems"]
     n = len(all_problems)
-    if n >= 3:
-        easy_indices = range(0, n//3)
-        medium_indices = range(n//3, 2*n//3)
-        hard_indices = range(2*n//3, n)
-    else:
-        easy_indices = [0]
-        medium_indices = [1] if n > 1 else [0]
-        hard_indices = [2] if n > 2 else [n-1]
-
+    third = max(1, (n + 2) // 3)
+    easy_end = third
+    medium_end = min(third * 2, n)
     if difficulty == "easy":
-        filtered = [all_problems[i] for i in easy_indices]
+        filtered = all_problems[:easy_end]
     elif difficulty == "medium":
-        filtered = [all_problems[i] for i in medium_indices]
+        filtered = all_problems[easy_end:medium_end]
     else:
-        filtered = [all_problems[i] for i in hard_indices]
+        filtered = all_problems[medium_end:]
     if not filtered:
         filtered = all_problems
     problems = filtered.copy()
