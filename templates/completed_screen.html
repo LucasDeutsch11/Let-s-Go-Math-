@@ -149,14 +149,14 @@
             <div class="completion-title">Well Done!</div>
             <div class="topic-title">{{ topic.title }}</div>
             <div class="completion-message">
-                You've completed all {{ topic.problems|length }} problems in this topic at <strong>{{ difficulty|capitalize }}</strong> difficulty!<br>
+                You've completed all {{ total_problems }} problems in this topic at <strong>{{ difficulty|capitalize }}</strong> difficulty!<br>
                 Great work mastering {{ topic.title.lower() }}!
             </div>
             <div class="stats">
                 <h3>Practice Summary</h3>
                 <p><strong>Correct Answers:</strong> {{ correct_count }}</p>
                 <p><strong>Incorrect Answers:</strong> {{ incorrect_count }}</p>
-                <p><strong>Total Problems:</strong> {{ topic.problems|length }}</p>
+                <p><strong>Total Problems:</strong> {{ total_problems }}</p>
                 <p><strong>Topic:</strong> {{ topic.description }}</p>
                 {% if user %}
                 <p><em>Your progress has been saved to your account!</em></p>
