@@ -229,9 +229,17 @@ def session_login():
 def dashboard():
     if "user_id" not in session:
         return redirect(url_for("login"))
-        # Gather progress from session
-        session_progress = session.get("progress", {})
+        # Gather progress from Firestore if logged in, else session
         progress = {}
+        session_progress = session.get("progress", {})
+        if firebase_available and "user_id" in session:
+            try:
+                doc = db.collection("user_progress").document(session["user_id"]).get()
+                if doc.exists:
+                    firestore_progress = doc.to_dict().get("progress", {})
+                    session_progress = firestore_progress
+            except Exception as e:
+                print(f"Error loading progress from Firestore: {e}")
         for topic_id, data in session_progress.items():
             topic_info = MATH_TOPICS.get(topic_id, {"title": topic_id})
             progress[topic_id] = {
@@ -384,28 +392,37 @@ def practice():
     )
 
 def update_user_progress(topic_id, problem_index):
-    """Update user progress for a specific topic"""
+    """Update user progress for a specific topic and save to Firebase if logged in"""
     if "progress" not in session:
         session["progress"] = {}
-    
     if topic_id not in session["progress"]:
         session["progress"][topic_id] = {
             "completed": 0,
             "total": len(MATH_TOPICS[topic_id]["problems"]),
             "solved_problems": []
         }
-    
     # Ensure solved_problems is a list
     if not isinstance(session["progress"][topic_id]["solved_problems"], list):
         session["progress"][topic_id]["solved_problems"] = []
-    
     # Add this problem to solved problems if not already solved
     if problem_index not in session["progress"][topic_id]["solved_problems"]:
         session["progress"][topic_id]["solved_problems"].append(problem_index)
-    
     # Update completed count
     session["progress"][topic_id]["completed"] = len(session["progress"][topic_id]["solved_problems"])
     session.modified = True
+    # Save to Firebase if logged in
+    if firebase_available and "user_id" in session:
+        try:
+            save_progress_to_firestore(session["user_id"], session["progress"])
+        except Exception as e:
+            print(f"Error saving progress to Firestore: {e}")
+
+# Helper to save progress to Firestore
+def save_progress_to_firestore(user_id, progress_dict):
+    if not db:
+        return
+    doc_ref = db.collection("user_progress").document(user_id)
+    doc_ref.set({"progress": progress_dict}, merge=True)
 
 @app.route("/next", methods=["POST"])
 def next_problem():

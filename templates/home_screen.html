@@ -79,21 +79,24 @@
 <body>
     <header>
         <div class="header-left">
-            <h1>Welcome to Let's Go Math!</h1>
+            <h1>Let's Go Math!</h1>
             <div class="subtitle">Algebra Practice</div>
         </div>
-        <div class="header-right">
-            {% if user %} 
+        <nav style="flex-shrink: 0;">
+            <a href="/" style="color: white; margin-right: 18px; text-decoration: none; font-weight: bold;">Home</a>
+            <a href="/dashboard" style="color: white; margin-right: 18px; text-decoration: none; font-weight: bold;">Progress</a>
+            <a href="/topics" style="color: white; margin-right: 18px; text-decoration: none; font-weight: bold;">Topics</a>
+            {% if user %}
                 <span style="color: white; margin-right: 15px;">Welcome, {{ user.name }}!</span>
                 <form action="/logout" method="GET" style="display: inline; margin: 0;">
                     <button type="submit" class="header-signin-btn" style="background: #dc3545; padding: 6px 12px;">Logout</button>
                 </form>
             {% else %}
-                <form action="/login" method="GET" style="margin: 0;">
+                <form action="/login" method="GET" style="display: inline; margin: 0;">
                     <button type="submit" class="header-signin-btn">Sign In</button>
                 </form>
             {% endif %}
-        </div>
+        </nav>
     </header>
     <main class="container">
         <h2>Home</h2>
