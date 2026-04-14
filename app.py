@@ -277,15 +277,24 @@ def practice():
     topic = MATH_TOPICS[topic_id]
     # --- Difficulty-based filtering and randomization ---
     all_problems = topic["problems"]
-    # Assign difficulty to problems by index (simple mapping for demo)
-    easy_idx = int(len(all_problems) * 0.4)
-    med_idx = int(len(all_problems) * 0.7)
-    if difficulty == "easy":
-        filtered = all_problems[:easy_idx] if easy_idx > 0 else all_problems[:1]
-    elif difficulty == "medium":
-        filtered = all_problems[easy_idx:med_idx] if med_idx > easy_idx else all_problems[easy_idx:]
+    # Assign difficulty to problems by index (non-overlapping, always different)
+    n = len(all_problems)
+    # For small sets, split as evenly as possible
+    if n >= 3:
+        easy_indices = range(0, n//3)
+        medium_indices = range(n//3, 2*n//3)
+        hard_indices = range(2*n//3, n)
     else:
-        filtered = all_problems[med_idx:] if med_idx < len(all_problems) else all_problems[-1:]
+        easy_indices = [0]
+        medium_indices = [1] if n > 1 else [0]
+        hard_indices = [2] if n > 2 else [n-1]
+
+    if difficulty == "easy":
+        filtered = [all_problems[i] for i in easy_indices]
+    elif difficulty == "medium":
+        filtered = [all_problems[i] for i in medium_indices]
+    else:
+        filtered = [all_problems[i] for i in hard_indices]
     # If not enough, fallback to all
     if not filtered:
         filtered = all_problems
