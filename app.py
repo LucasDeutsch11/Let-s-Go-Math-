@@ -308,6 +308,11 @@ def practice():
         session["difficulty_last"] = difficulty
         session["topic_last"] = topic_id
         session["problem_index"] = 0
+        # Reset answer history for this topic when starting a new session/difficulty
+        answer_history = session.get("answer_history", {})
+        answer_history[topic_id] = []
+        session["answer_history"] = answer_history
+        session.modified = True
     else:
         problems = [all_problems[i] for i in session["problem_order"]]
     
