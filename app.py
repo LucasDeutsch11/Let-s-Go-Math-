@@ -266,6 +266,15 @@ def start(topic_id=None):
     session["current_topic"] = topic_id
     session["problem_index"] = 0
     session["difficulty"] = difficulty
+    # Force new shuffle and reset answer history every time user starts
+    session.pop("problem_order", None)
+    session.pop("difficulty_last", None)
+    session.pop("topic_last", None)
+    history_key = topic_id + "_" + difficulty
+    answer_history = session.get("answer_history", {})
+    answer_history[history_key] = []
+    session["answer_history"] = answer_history
+    session.modified = True
     return redirect(url_for("practice"))
 
 @app.route("/practice", methods=["GET", "POST"])
@@ -298,18 +307,18 @@ def practice():
     # If not enough, fallback to all
     if not filtered:
         filtered = all_problems
-    # Shuffle for variety (no seed, always new order)
-    problems = filtered.copy()
-    random.shuffle(problems)
-    # Save the randomized order in session for consistency
+    # Build problem list from session order, or create new shuffled order
     if "problem_order" not in session or session.get("difficulty_last") != difficulty or session.get("topic_last") != topic_id:
+        problems = filtered.copy()
+        random.shuffle(problems)
         session["problem_order"] = [all_problems.index(p) for p in problems]
         session["difficulty_last"] = difficulty
         session["topic_last"] = topic_id
         session["problem_index"] = 0
-        # Reset answer history for this topic/difficulty when starting a new session/difficulty
+        # Reset answer history for this topic/difficulty
+        history_key = topic_id + "_" + difficulty
         answer_history = session.get("answer_history", {})
-        answer_history[(topic_id, difficulty)] = []
+        answer_history[history_key] = []
         session["answer_history"] = answer_history
         session.modified = True
     else:
@@ -376,8 +385,9 @@ def practice():
                 feedback = "An error occurred. Please try again."
 
         # --- Track answer history for round feedback ---
+        history_key = topic_id + "_" + difficulty
         answer_history = session.get("answer_history", {})
-        topic_history = answer_history.get((topic_id, difficulty), [])
+        topic_history = answer_history.get(history_key, [])
         # Only add if this is a new answer for this problem index in this session
         problem_idx = session["problem_order"][idx] if "problem_order" in session else idx
         already_answered = any(entry.get("problem") == problem_idx for entry in topic_history)
@@ -387,7 +397,7 @@ def practice():
                 "correct": feedback == "Correct!",
                 "user_answer": user_answer
             })
-            answer_history[(topic_id, difficulty)] = topic_history
+            answer_history[history_key] = topic_history
             session["answer_history"] = answer_history
             session.modified = True
 
@@ -497,7 +507,8 @@ def topic_completed(topic_id):
     if "problem_order" in session:
         problems = [all_problems[i] for i in session["problem_order"]]
     answer_history = session.get("answer_history", {})
-    topic_history = answer_history.get((topic_id, difficulty), [])
+    history_key = topic_id + "_" + difficulty
+    topic_history = answer_history.get(history_key, [])
     valid_indices = set(session["problem_order"]) if "problem_order" in session else set([all_problems.index(p) for p in problems])
     correct_count = 0
     incorrect_count = 0
