@@ -430,14 +430,27 @@ def next_problem():
     if topic_id not in MATH_TOPICS:
         return redirect(url_for("topics"))
     
+    difficulty = session.get("difficulty", "easy")
     topic = MATH_TOPICS[topic_id]
+    all_problems = topic["problems"]
+    easy_idx = int(len(all_problems) * 0.4)
+    med_idx = int(len(all_problems) * 0.7)
+    if difficulty == "easy":
+        filtered = all_problems[:easy_idx] if easy_idx > 0 else all_problems[:1]
+    elif difficulty == "medium":
+        filtered = all_problems[easy_idx:med_idx] if med_idx > easy_idx else all_problems[easy_idx:]
+    else:
+        filtered = all_problems[med_idx:] if med_idx < len(all_problems) else all_problems[-1:]
+    if not filtered:
+        filtered = all_problems
+    problems = filtered.copy()
+    if "problem_order" in session:
+        problems = [all_problems[i] for i in session["problem_order"]]
     idx = session.get("problem_index", 0)
     idx += 1
-    
-    # Check if all problems in this topic are completed
-    if idx >= len(topic["problems"]):
+    # Check if all problems for this difficulty are completed
+    if idx >= len(problems):
         return redirect(url_for("topic_completed", topic_id=topic_id))
-    
     session["problem_index"] = idx
     return redirect(url_for("practice"))
 
