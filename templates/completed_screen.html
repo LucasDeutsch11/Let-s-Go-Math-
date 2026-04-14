@@ -145,21 +145,23 @@
     
     <main class="container">
         <div class="completion-box">
-            <div class="celebration-emoji">Celebration!</div>
-            <div class="completion-title">Congratulations!</div>
+            <div class="celebration-emoji">🎉</div>
+            <div class="completion-title">Well Done!</div>
+            <div class="topic-title">{{ topic.title }}</div>
             <div class="completion-message">
-                You've successfully completed all 5 algebra problems!<br>
-                Great work on your math practice today!
+                You've completed all {{ topic.problems|length }} problems in this topic at <strong>{{ difficulty|capitalize }}</strong> difficulty!<br>
+                Great work mastering {{ topic.title.lower() }}!
             </div>
-            
             <div class="stats">
-                <h3>Practice Session Complete</h3>
-                <p><strong>Problems Solved:</strong> 5 out of 5</p>
-                <p><strong>Topics Covered:</strong> Basic Algebra</p>
+                <h3>Practice Summary</h3>
+                <p><strong>Correct Answers:</strong> {{ correct_count }}</p>
+                <p><strong>Incorrect Answers:</strong> {{ incorrect_count }}</p>
+                <p><strong>Total Problems:</strong> {{ topic.problems|length }}</p>
+                <p><strong>Topic:</strong> {{ topic.description }}</p>
                 {% if user %}
                 <p><em>Your progress has been saved to your account!</em></p>
                 {% else %}
-                <p><em>Want to track your progress? <a href="/signup" style="color: #1f4bb8;">Create an account</a> to save your achievements!</em></p>
+                <p><em>Want to track your progress? <a href="/signup" style="color: #1f4bb8;">Create an account</a> to save your achievements across all topics!</em></p>
                 {% endif %}
             </div>
         </div>
