@@ -229,7 +229,17 @@ def session_login():
 def dashboard():
     if "user_id" not in session:
         return redirect(url_for("login"))
-    return redirect(url_for("home"))
+        # Gather progress from session
+        session_progress = session.get("progress", {})
+        progress = {}
+        for topic_id, data in session_progress.items():
+            topic_info = MATH_TOPICS.get(topic_id, {"title": topic_id})
+            progress[topic_id] = {
+                "title": topic_info["title"],
+                "completed": data.get("completed", 0),
+                "total": data.get("total", len(topic_info.get("problems", [])))
+            }
+        return render_template("dashboard.html", progress=progress)
 
 @app.route("/logout")
 def logout():
@@ -257,7 +267,32 @@ def practice():
     if topic_id not in MATH_TOPICS:
         return redirect(url_for("topics"))
     topic = MATH_TOPICS[topic_id]
-    problems = topic["problems"]
+    # --- Difficulty-based filtering and randomization ---
+    all_problems = topic["problems"]
+    # Assign difficulty to problems by index (simple mapping for demo)
+    easy_idx = int(len(all_problems) * 0.4)
+    med_idx = int(len(all_problems) * 0.7)
+    if difficulty == "easy":
+        filtered = all_problems[:easy_idx] if easy_idx > 0 else all_problems[:1]
+    elif difficulty == "medium":
+        filtered = all_problems[easy_idx:med_idx] if med_idx > easy_idx else all_problems[easy_idx:]
+    else:
+        filtered = all_problems[med_idx:] if med_idx < len(all_problems) else all_problems[-1:]
+    # If not enough, fallback to all
+    if not filtered:
+        filtered = all_problems
+    # Shuffle for variety
+    random.seed(session.get("user_id", time.time()))
+    problems = filtered.copy()
+    random.shuffle(problems)
+    # Save the randomized order in session for consistency
+    if "problem_order" not in session or session.get("difficulty_last") != difficulty or session.get("topic_last") != topic_id:
+        session["problem_order"] = [all_problems.index(p) for p in problems]
+        session["difficulty_last"] = difficulty
+        session["topic_last"] = topic_id
+        session["problem_index"] = 0
+    else:
+        problems = [all_problems[i] for i in session["problem_order"]]
     
     idx = session.get("problem_index", 0)
     if idx < 0 or idx >= len(problems):
