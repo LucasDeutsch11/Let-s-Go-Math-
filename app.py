@@ -307,9 +307,9 @@ def practice():
         session["difficulty_last"] = difficulty
         session["topic_last"] = topic_id
         session["problem_index"] = 0
-        # Reset answer history for this topic when starting a new session/difficulty
+        # Reset answer history for this topic/difficulty when starting a new session/difficulty
         answer_history = session.get("answer_history", {})
-        answer_history[topic_id] = []
+        answer_history[(topic_id, difficulty)] = []
         session["answer_history"] = answer_history
         session.modified = True
     else:
@@ -377,16 +377,17 @@ def practice():
 
         # --- Track answer history for round feedback ---
         answer_history = session.get("answer_history", {})
-        topic_history = answer_history.get(topic_id, [])
+        topic_history = answer_history.get((topic_id, difficulty), [])
         # Only add if this is a new answer for this problem index in this session
-        already_answered = any(entry.get("problem") == idx for entry in topic_history)
+        problem_idx = session["problem_order"][idx] if "problem_order" in session else idx
+        already_answered = any(entry.get("problem") == problem_idx for entry in topic_history)
         if not already_answered:
             topic_history.append({
-                "problem": idx if "problem_order" not in session else session["problem_order"][idx],
+                "problem": problem_idx,
                 "correct": feedback == "Correct!",
                 "user_answer": user_answer
             })
-            answer_history[topic_id] = topic_history
+            answer_history[(topic_id, difficulty)] = topic_history
             session["answer_history"] = answer_history
             session.modified = True
 
@@ -496,10 +497,8 @@ def topic_completed(topic_id):
     if "problem_order" in session:
         problems = [all_problems[i] for i in session["problem_order"]]
     answer_history = session.get("answer_history", {})
-    topic_history = answer_history.get(topic_id, [])
-    filtered_indices = set([all_problems.index(p) for p in problems])
-    # Only count answers for problems in this session's order
-    valid_indices = set(session["problem_order"]) if "problem_order" in session else filtered_indices
+    topic_history = answer_history.get((topic_id, difficulty), [])
+    valid_indices = set(session["problem_order"]) if "problem_order" in session else set([all_problems.index(p) for p in problems])
     correct_count = 0
     incorrect_count = 0
     for entry in topic_history:
