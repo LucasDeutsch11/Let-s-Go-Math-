@@ -89,7 +89,7 @@
             color: white;
             padding: 12px 16px;
             display: grid;
-            grid-template-columns: 50px 1fr 100px 100px 100px 80px;
+            grid-template-columns: 50px 1fr 150px 100px 80px;
             gap: 12px;
             font-weight: bold;
             font-size: 13px;
@@ -97,7 +97,7 @@
         .leaderboard-row {
             padding: 12px 16px;
             display: grid;
-            grid-template-columns: 50px 1fr 100px 100px 100px 80px;
+            grid-template-columns: 50px 1fr 150px 100px 80px;
             gap: 12px;
             border-bottom: 1px solid #ddd;
             align-items: center;
@@ -130,8 +130,25 @@
         .score {
             font-weight: bold;
             color: #28a745;
-            text-align: right;
             font-size: 14px;
+        }
+        .milestone-bar-bg {
+            background: #e3e8f5;
+            border-radius: 4px;
+            height: 6px;
+            margin-top: 4px;
+            overflow: hidden;
+        }
+        .milestone-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: linear-gradient(90deg, #28a745, #1f4bb8);
+            transition: width 0.4s ease;
+        }
+        .milestone-label {
+            font-size: 10px;
+            color: #888;
+            margin-top: 2px;
         }
         .accuracy {
             color: #007bff;
@@ -207,7 +224,7 @@
         @media (max-width: 768px) {
             .table-header,
             .leaderboard-row {
-                grid-template-columns: 40px 1fr 70px 70px;
+                grid-template-columns: 40px 1fr 120px 70px;
                 gap: 8px;
             }
             .total-time,
@@ -264,9 +281,8 @@
                 <div class="table-header">
                     <div>Rank</div>
                     <div>Player</div>
-                    <div>Score</div>
+                    <div>Score / Progress</div>
                     <div>Accuracy</div>
-                    <div>Time</div>
                     <div>Date</div>
                 </div>
                 
@@ -276,13 +292,18 @@
                             {% if loop.index == 1 %}🥇{% elif loop.index == 2 %}🥈{% elif loop.index == 3 %}🥉{% else %}{{ loop.index }}{% endif %}
                         </div>
                         <div class="username">{{ entry.username }}</div>
-                        <div class="score">{{ entry.score }}</div>
-                        <div class="accuracy">{{ "%.1f"|format(entry.accuracy) }}%</div>
-                        <div class="total-time">
-                            {% set minutes = (entry.total_time // 60) | int %}
-                            {% set seconds = (entry.total_time % 60) | int %}
-                            {{ minutes }}:{{ '%02d'|format(seconds) }}
+                        <div class="score">
+                            {% set score = entry.score %}
+                            {% set tier_progress = score % 100 %}
+                            {% set next_milestone = ((score // 100) + 1) * 100 %}
+                            {% set bar_pct = 100 if (tier_progress == 0 and score > 0) else tier_progress %}
+                            <strong>{{ score }}</strong> pts
+                            <div class="milestone-bar-bg">
+                                <div class="milestone-bar-fill" style="width: {{ bar_pct }}%;"></div>
+                            </div>
+                            <div class="milestone-label">→ {{ next_milestone }}</div>
                         </div>
+                        <div class="accuracy">{{ "%.1f"|format(entry.accuracy) }}%</div>
                         <div class="date">
                             {% if entry.timestamp %}
                                 {% set timestamp_str = entry.timestamp if entry.timestamp is string else entry.timestamp.isoformat() %}

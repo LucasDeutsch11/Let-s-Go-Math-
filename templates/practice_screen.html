@@ -141,7 +141,7 @@
             <div class="equation">
                 {{ equation }}
             </div>
-            <form method="POST">
+            <form method="POST" id="answer-form">
                 <label for="answer">Your Answer:</label>
                 <input
                     type="text"
@@ -150,7 +150,7 @@
                     placeholder="Type your answer..."
                     value="{{ user_answer }}"
                 />
-                <button type="submit">Submit</button>
+                <button type="submit" id="submit-btn">Submit</button>
             </form>
                 {% if feedback %}
                      {% if feedback == "Correct!" %}
@@ -173,5 +173,23 @@
     <footer>
         © 2026 Let's Go Math
     </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var correctFeedback = document.querySelector('.feedback.ok');
+            if (correctFeedback) {
+                var submitBtn = document.getElementById('submit-btn');
+                var answerInput = document.getElementById('answer');
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.style.background = '#adb5bd';
+                    submitBtn.style.cursor = 'not-allowed';
+                    submitBtn.style.opacity = '0.7';
+                }
+                if (answerInput) {
+                    answerInput.disabled = true;
+                }
+            }
+        });
+    </script>
 </body>
 </html>
