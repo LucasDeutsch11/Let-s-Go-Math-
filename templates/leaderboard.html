@@ -301,7 +301,7 @@
                             <div class="milestone-bar-bg">
                                 <div class="milestone-bar-fill" style="width: {{ bar_pct }}%;"></div>
                             </div>
-                            <div class="milestone-label">→ {{ next_milestone }}</div>
+                            <div class="milestone-label">{{ tier_progress }} / 100 → {{ next_milestone }}</div>
                         </div>
                         <div class="accuracy">{{ "%.1f"|format(entry.accuracy) }}%</div>
                         <div class="date">
