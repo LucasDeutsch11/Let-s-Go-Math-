@@ -121,12 +121,18 @@
         </div>
     </header>
     <main class="container">
-        <h2>Practice Problem</h2>
-        <div style="margin-bottom: 10px; font-size: 16px; color: #1f4bb8;">
-            Difficulty: <strong>{{ difficulty|capitalize }}</strong>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <div>
+                <h2 style="margin: 0;">{{ topic.title }}</h2>
+                <div style="font-size: 15px; color: #1f4bb8; margin-top: 4px;">Difficulty: <strong>{{ difficulty|capitalize }}</strong></div>
+            </div>
+            <div style="text-align: right;">
+                <div style="font-size: 22px; font-weight: bold; color: #1f4bb8;">{{ problem_number }} / {{ total_problems }}</div>
+                <div style="font-size: 13px; color: #888;">Problems</div>
+            </div>
         </div>
-        <form action="/" method="GET">
-            <button type="submit">&larr; Back to Home</button>
+        <form action="/topics" method="GET">
+            <button type="submit" style="background: #6c757d; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-size: 14px; cursor: pointer; margin-bottom: 14px;">&larr; Back to Topics</button>
         </form>
         <div class="problem-box">
             <div class="instruction">

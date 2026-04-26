@@ -638,62 +638,77 @@ def health_check():
 @app.route("/challenge")
 def challenge_mode():
     """Challenge mode selection screen"""
-    if request.method == "POST":
-        user_answer = request.form.get("answer", "").strip()
-        if user_answer == "":
-            feedback = "Please enter an answer."
-        else:
-            try:
-                # Handle different answer types
-                if isinstance(problem["answer"], str):
-                    user_answer_clean = user_answer.replace(" ", "")
-                    correct_answer_clean = str(problem["answer"]).replace(" ", "")
-                    if "," in correct_answer_clean and "," in user_answer_clean:
-                        user_values = set(user_answer_clean.split(","))
-                        correct_values = set(correct_answer_clean.split(","))
-                        is_correct = user_values == correct_values
-                    elif "(" in correct_answer_clean and ")" in correct_answer_clean and "(" in user_answer_clean and ")" in user_answer_clean:
-                        import re
-                        correct_factors = re.findall(r'\([^)]+\)', correct_answer_clean)
-                        user_factors = re.findall(r'\([^)]+\)', user_answer_clean)
-                        correct_factors_set = set(correct_factors)
-                        user_factors_set = set(user_factors)
-                        is_correct = correct_factors_set == user_factors_set
-                    else:
-                        is_correct = user_answer_clean.lower() == correct_answer_clean.lower()
-                    if is_correct:
-                        feedback = "Correct!"
-                        if "user_id" in session:
-                            try:
-                                update_user_progress(topic_id, idx)
-                            except Exception as e:
-                                print(f"Progress update error: {e}")
-                    else:
-                        feedback = "Incorrect!"
-                else:
-                    try:
-                        user_num = int(user_answer)
-                        if user_num == problem["answer"]:
-                            feedback = "Correct!"
-                            if "user_id" in session:
-                                try:
-                                    update_user_progress(topic_id, idx)
-                                except Exception as e:
-                                    print(f"Progress update error: {e}")
-                        else:
-                            feedback = "Incorrect!"
-                    except ValueError:
-                        feedback = "Please enter a valid number."
-            except Exception as e:
-                print(f"Answer checking error: {e}")
-                feedback = "An error occurred. Please try again."
-        # --- Track answer history for round feedback ---
-        answer_history = session.get("answer_history", {})
-        topic_history = answer_history.get(topic_id, [])
-        topic_history.append({"problem": idx, "correct": feedback == "Correct!", "user_answer": user_answer})
-        answer_history[topic_id] = topic_history
-        session["answer_history"] = answer_history
+    user_info = None
+    if "user_id" in session:
+        user_info = {
+            "email": session.get("user_email"),
+            "name": session.get("user_name", "User"),
+            "id": session.get("user_id")
+        }
+    return render_template("challenge_mode.html", user=user_info, config=CHALLENGE_CONFIG)
+
+@app.route("/challenge/start", methods=["POST"])
+def start_challenge():
+    """Start a new challenge session"""
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    questions = generate_challenge_questions()
+    session["challenge"] = {
+        "questions": questions,
+        "current_round": 1,
+        "current_question": 0,
+        "score": 0,
+        "round_scores": [],
+        "answers": [],
+        "start_time": time.time(),
+        "round_start_time": time.time()
+    }
+    session.modified = True
+    return redirect(url_for("challenge_round"))
+
+@app.route("/challenge/round")
+def challenge_round():
+    """Show current challenge question"""
+    if "challenge" not in session or "user_id" not in session:
+        return redirect(url_for("challenge_mode"))
+
+    challenge = session["challenge"]
+    current_round = challenge["current_round"]
+    current_question = challenge["current_question"]
+
+    # Check if all rounds complete
+    if current_round > CHALLENGE_CONFIG["rounds"]:
+        return redirect(url_for("challenge_complete"))
+
+    round_questions = challenge["questions"][current_round - 1]
+
+    # Check if round is complete
+    if current_question >= len(round_questions):
+        challenge["current_round"] += 1
+        challenge["current_question"] = 0
+        challenge["round_start_time"] = time.time()
+        session["challenge"] = challenge
         session.modified = True
+        if challenge["current_round"] > CHALLENGE_CONFIG["rounds"]:
+            return redirect(url_for("challenge_complete"))
+        return redirect(url_for("challenge_round"))
+
+    question = round_questions[current_question]
+    user_info = {
+        "email": session.get("user_email"),
+        "name": session.get("user_name", "User")
+    }
+
+    return render_template("challenge_round.html",
+                           user=user_info,
+                           question=question,
+                           round_number=current_round,
+                           question_number=current_question + 1,
+                           total_questions=len(round_questions),
+                           time_limit=CHALLENGE_CONFIG["time_limit_seconds"],
+                           config=CHALLENGE_CONFIG,
+                           score=challenge["score"])
 
 @app.route("/challenge/answer", methods=["POST"])
 def submit_challenge_answer():
@@ -707,9 +722,7 @@ def submit_challenge_answer():
     
     # Get submitted answer
     user_answer = request.form.get("answer", "").strip()
-    print(f"DEBUG: Received answer from user: '{user_answer}'")  # DEBUG
     time_taken = time.time() - challenge["round_start_time"]
-    print(f"DEBUG: Time taken: {time_taken}")  # DEBUG
     
     # Get current question
     round_questions = challenge["questions"][current_round - 1]
@@ -760,7 +773,6 @@ def submit_challenge_answer():
 @app.route("/challenge/timeout", methods=["POST"])
 def challenge_timeout():
     """Handle when timer runs out"""
-    print("DEBUG: Timeout route called!")  # DEBUG
     if "challenge" not in session or "user_id" not in session:
         return jsonify({"error": "No active challenge"}), 400
     

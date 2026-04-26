@@ -8,7 +8,6 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: #f5f;
             background: #f5f7fb;
             margin: 0;
             padding: 0;
@@ -26,8 +25,8 @@
             margin: 30px auto;
             background: white;
             padding: 30px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
         }
         .completion-header {
             text-align: center;
@@ -175,7 +174,7 @@
         .btn {
             padding: 10px 20px;
             border: none;
-            border-radius: 4px;
+            border-radius: 8px;
             font-size: 14px;
             font-weight: bold;
             cursor: pointer;
@@ -229,11 +228,16 @@
 </head>
 <body>
     <header>
-        <div>
-            <h1 style="margin: 0; font-size: 20px;">Challenge Complete!</h1>
-        </div>
-        <div>
-            <span style="color: white;">{{ user.name }}</span>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h1 style="margin: 0; font-size: 22px;">Let's Go Math! - Challenge Complete</h1>
+            </div>
+            <nav style="display: flex; align-items: center; gap: 12px;">
+                <a href="/" style="color: white; text-decoration: none; font-weight: bold;">Home</a>
+                <a href="/dashboard" style="color: white; text-decoration: none; font-weight: bold;">Progress</a>
+                <a href="/topics" style="color: white; text-decoration: none; font-weight: bold;">Topics</a>
+                <span style="color: white;">{{ user.name }}</span>
+            </nav>
         </div>
     </header>
 

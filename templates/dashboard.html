@@ -25,10 +25,13 @@
             <div>
                 <h1 style="margin-bottom: 0;">Progress Dashboard</h1>
             </div>
-            <nav>
-                <a href="/" style="color: white; margin-right: 18px; text-decoration: none; font-weight: bold;">Home</a>
-                <a href="/dashboard" style="color: white; margin-right: 18px; text-decoration: none; font-weight: bold;">Progress</a>
-                <a href="/topics" style="color: white; margin-right: 18px; text-decoration: none; font-weight: bold;">Topics</a>
+            <nav style="display: flex; align-items: center; gap: 8px;">
+                <a href="/" style="color: white; margin-right: 10px; text-decoration: none; font-weight: bold;">Home</a>
+                <a href="/dashboard" style="color: white; margin-right: 10px; text-decoration: none; font-weight: bold;">Progress</a>
+                <a href="/topics" style="color: white; margin-right: 10px; text-decoration: none; font-weight: bold;">Topics</a>
+                <form action="/logout" method="GET" style="display: inline; margin: 0;">
+                    <button type="submit" style="background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 8px; font-size: 14px; cursor: pointer;">Logout</button>
+                </form>
             </nav>
         </div>
     </header>
