@@ -49,10 +49,10 @@
             <tr>
                 <td>{{ data.title }}</td>
                 <td class="center">{{ data.completed }}</td>
-                <td class="center">{{ data.total }}</td>
+                <td class="center">100</td>
                 <td>
                     <div class="progress-bar-bg">
-                        <div class="progress-bar" style="width: {{ ((data.completed / data.total * 100) | round(0)) if data.total > 0 else 0 }}%;"></div>
+                        <div class="progress-bar" style="width: {{ [data.completed, 100] | min }}%;"></div>
                     </div>
                 </td>
             </tr>
