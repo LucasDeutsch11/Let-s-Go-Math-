@@ -517,19 +517,9 @@ def update_user_progress(topic_id, problem_index):
     if "progress" not in session:
         session["progress"] = {}
     if topic_id not in session["progress"]:
-        session["progress"][topic_id] = {
-            "completed": 0,
-            "total": len(MATH_TOPICS[topic_id]["problems"]),
-            "solved_problems": []
-        }
-    # Ensure solved_problems is a list
-    if not isinstance(session["progress"][topic_id]["solved_problems"], list):
-        session["progress"][topic_id]["solved_problems"] = []
-    # Add this problem to solved problems if not already solved
-    if problem_index not in session["progress"][topic_id]["solved_problems"]:
-        session["progress"][topic_id]["solved_problems"].append(problem_index)
-    # Update completed count
-    session["progress"][topic_id]["completed"] = len(session["progress"][topic_id]["solved_problems"])
+        session["progress"][topic_id] = {"completed": 0}
+    # Increment on every correct answer so users can work toward 100
+    session["progress"][topic_id]["completed"] = session["progress"][topic_id].get("completed", 0) + 1
     session.modified = True
     # Save to Firebase if logged in
     if firebase_available and "user_id" in session:
